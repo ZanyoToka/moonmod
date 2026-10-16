@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:bone" },
+    { "item": "minecraft:bone" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "item": "moonproject:abnormality_fragment",
+    "count": 2
+  }
+}

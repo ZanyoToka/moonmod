@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "moonproject:abnormality_fragment" },
+    { "item": "moonproject:abnormality_fragment" },
+    { "item": "moonproject:abnormality_fragment" },
+    { "item": "moonproject:abnormality_fragment" },
+    { "item": "minecraft:iron_ingot" }
+  ],
+  "result": {
+    "item": "moonproject:ego_core",
+    "count": 1
+  }
+}

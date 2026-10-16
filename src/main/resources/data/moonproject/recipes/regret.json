@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G",
+    "G",
+    "S"
+  ],
+  "key": {
+    "G": { "item": "moonproject:ego_core" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "item": "moonproject:regret",
+    "count": 1
+  }
+}
