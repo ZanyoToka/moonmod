@@ -3,6 +3,7 @@ package com.moonproject.moonmod.event;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.effect.ModEffects;
+import com.moonproject.moonmod.item.ModItems;
 import com.moonproject.moonmod.sanity.Sanity;
 import com.moonproject.moonmod.item.AlayaVijnanaItem;
 import net.minecraft.nbt.CompoundTag;
@@ -96,6 +97,12 @@ public final class CombatEvents {
     /** 存在抹除：带斩痕死亡的生物不留遗物。 */
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
+        // 被阿赖耶识击杀（任意技能）→ 存在抹除：不留任何掉落物
+        if (event.getSource().getEntity() instanceof Player killer
+                && killer.getMainHandItem().is(ModItems.ALAYA_VIJNANA.get())) {
+            event.getDrops().clear();
+            return;
+        }
         if (isNoHeal(event.getEntity())) {
             event.getDrops().clear();
         }
@@ -136,8 +143,8 @@ public final class CombatEvents {
         SMEAR("涂抹", 2, 1.00D, false, 3),
         SPILL("泼洒", 3, 1.25D, false, 5),
         DEPICT("描绘", 3, 1.25D, true, 5),
-        HEAVENLY_KILL("天杀", 5, 2.00D, true, 4),
-        ERASE("将我抹去，也将你抹去。", 5, 3.00D, true, 5);
+        HEAVENLY_KILL("天杀", 5, 24.00D, true, 4),
+        ERASE("将我抹去，也将你抹去。", 5, 40.00D, true, 5);
 
         final String display;
         final int coins;
@@ -181,21 +188,23 @@ public final class CombatEvents {
         double multiplier = skill.ratio * (1.0D + poise * MoonProjectConfig.slowSlashPoiseBonus());
         float total = (float) (baseDamage * multiplier);
         // 原著「硬币系统」：每个技能有若干枚硬币，每枚随机正面（威力 +20%）或反面（威力 -20%）
-        final double coinBonus = 0.20D;
-        double coinMultiplier = 1.0D;
+        // 原著「硬币系统」：按「正面数 / 硬币总数」的比例计算倍率
+        //   倍率 = 0.2 + 1.8 * (好硬币数 / 硬币总数)   -> 全坏 0.2，全好 2.0
+        final boolean inverted = Sanity.hasAbyssCall(player);
+        final int sanity = Sanity.get(player);
+        final double headsChance = Math.max(0.05D, Math.min(0.95D, 0.5D + sanity / 200.0D));
+        int goodCount = 0;
         StringBuilder faces = new StringBuilder();
         for (int i = 0; i < skill.coins; i++) {
-            // 理智值影响硬币正负概率：50% ± (理智 / 200)，理智 ±45 => 27.5% ~ 72.5%
-            int sanity = Sanity.get(player);
-            double headsChance = Math.max(0.05D, Math.min(0.95D, 0.5D + sanity / 200.0D));
             boolean heads = player.getRandom().nextDouble() < headsChance;
-            // 手持阿赖耶识（阿鼻叫唤）时，负币与正币效果互换：反面加成、正面减益
-            boolean inverted = Sanity.hasAbyssCall(player);
+            // 手持阿赖耶识时正负效果互换：反面算「好」
             boolean good = inverted != heads;
+            if (good) {
+                goodCount++;
+            }
             faces.append(heads ? "正" : "反");
-            coinMultiplier += good ? coinBonus : -coinBonus;
         }
-        coinMultiplier = Math.max(0.2D, coinMultiplier);
+        final double coinMultiplier = 0.2D + 1.8D * ((double) goodCount / Math.max(1, skill.coins));
         total *= (float) coinMultiplier;
         // 硬币结果通过 CoinMessage 同步给客户端，由 CoinHudOverlay 用图标显示（理智圆环下方）
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
