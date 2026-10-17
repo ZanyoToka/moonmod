@@ -1,0 +1,17 @@
+{
+  "type": "epicfight:tachi",
+  "attributes": {
+    "common": {
+      "armor_negation": 25.0,
+      "impact": 2.0,
+      "max_strikes": 3,
+      "damage_bonus": 4.0,
+      "speed_bonus": 0.2
+    }
+  },
+  "collider": {
+    "number": 3,
+    "center": [0.0, 0.0, -1.2],
+    "size": [0.6, 0.8, 2.4]
+  }
+}

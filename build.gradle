@@ -115,8 +115,12 @@ repositories {
     // 阿里云镜像加速 Maven Central
     maven { url = 'https://maven.aliyun.com/repository/public' }
 
-    // Put repositories for dependencies here
-    // ForgeGradle automatically adds the Forge maven and Maven Central for you
+    // 史诗战斗（Epic Fight）在 Modrinth 上的 Maven，用于引入其武器动作/连段
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 dependencies {
@@ -126,6 +130,10 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // 史诗战斗（Epic Fight）：1.20.1 Forge 版本
+    // 作用：让阿赖耶识/悔恨使用 EF 的武器动作、连段与攻击判定（武器归属由 data/moonproject/capabilities 下的 JSON 决定）
+    implementation fg.deobf('maven.modrinth:epic-fight:20.14.17-mc1.20.1-forge')
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

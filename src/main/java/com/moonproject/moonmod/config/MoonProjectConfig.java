@@ -15,13 +15,13 @@ public final class MoonProjectConfig {
     public static final ForgeConfigSpec SPEC;
 
     // ===== 阿赖耶识：默认值（同时作为物品属性兜底） =====
-    /** 鞘击态伤害修正：面板 = 玩家基础 1 + 本值 = 14（用户追加要求；攻速保持 1.6 次/秒不变）。 */
-    public static final double DEFAULT_SHEATHED_DAMAGE = 13.0D;
+    /** 鞘击态伤害修正：面板 = 玩家基础 1 + 本值 = 17（用户追加：整体再提高一档）。 */
+    public static final double DEFAULT_SHEATHED_DAMAGE = 16.0D;
     /**
-     * 解放态伤害修正：面板 = 1 + 本值 = 35。
-     * 监守者 500 血 → 5 刀/秒 × 3 秒 = 15 刀 × 35 = 525，约 3 秒击杀。
+     * 解放态伤害修正：面板 = 1 + 本值 = 45。
+     * 技能按原著硬币数分段（挥砍 2 段、天杀 5 段、抹去 5 段），总伤害 = 面板 × 技能倍率。
      */
-    public static final double DEFAULT_DRAWN_DAMAGE = 34.0D;
+    public static final double DEFAULT_DRAWN_DAMAGE = 44.0D;
     public static final double DEFAULT_SHEATHED_ATTACK_SPEED = -2.4D;
     /** 解放态攻速修正：每秒攻击次数 = 4 + 本值 = 5.0 次/秒。 */
     public static final double DEFAULT_DRAWN_ATTACK_SPEED = 1.0D;

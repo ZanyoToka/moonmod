@@ -405,6 +405,34 @@ public final class CombatEvents {
         return true;
     }
 
+    /**
+     * 专属技能键入口（服务端执行）：0 = 天杀，1 = 将我抹去，也将你抹去。
+     * 由 {@code ModNetwork} 的按键网络包调用。
+     */
+    public static void castUltimateByKey(Player player, int skill) {
+        ItemStack stack = player.getMainHandItem();
+        if (!AlayaVijnanaItem.isDrawnBlade(stack)) {
+            return;
+        }
+        boolean erase = skill == 1;
+        int cost = erase ? MoonProjectConfig.eraseCutbondCost() : MoonProjectConfig.heavenlyKillCutbondCost();
+        if (stackCount(player, ModEffects.CUTBOND.get()) < cost) {
+            player.displayClientMessage(Component.translatable(
+                    "item.moonproject.alaya_vijnana.skill.not_enough", cost), true);
+            return;
+        }
+        LivingEntity target = findTarget(player, MoonProjectConfig.skill3Range());
+        if (target == null) {
+            player.displayClientMessage(
+                    Component.translatable("item.moonproject.alaya_vijnana.skill.no_target"), true);
+            return;
+        }
+        takeCutbond(player, cost);
+        Skill chosen = erase ? Skill.ERASE : Skill.HEAVENLY_KILL;
+        float base = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        scheduleSkill(player, target, chosen, base);
+    }
+
     /** 在正前方约 60° 的锥形内，寻找最近的敌对生物。 */
     private static LivingEntity findTarget(Player player, double range) {
         Vec3 look = player.getLookAngle();
