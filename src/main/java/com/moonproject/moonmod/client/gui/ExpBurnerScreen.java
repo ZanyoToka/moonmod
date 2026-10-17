@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ExpBurnerScreen extends AbstractContainerScreen<ExpBurnerMenu> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/furnace.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/container/furnace.png");
 
     public ExpBurnerScreen(ExpBurnerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

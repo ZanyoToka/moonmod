@@ -477,11 +477,11 @@ public final class MoonProjectConfig {
     }
 
     public static int cutoffMaxStacks() {
-        return SPEC.isLoaded() ? CUTOFF_MAX_STACKS.get() : 30;
+        return SPEC.isLoaded() ? CUTOFF_MAX_STACKS.get() : 200;
     }
 
     public static int cutoffTriggerStacks() {
-        return SPEC.isLoaded() ? CUTOFF_TRIGGER_STACKS.get() : 20;
+        return SPEC.isLoaded() ? CUTOFF_TRIGGER_STACKS.get() : 100;
     }
 
     public static int cutoffTriggerDamagePerStack() {

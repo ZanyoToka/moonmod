@@ -12,14 +12,18 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * 恐慌类型系统：理智值低于 {@link #PANIC_THRESHOLD} 时，玩家陷入一种恐慌类型。
- * <p>固定恐慌（{@link Sanity#hasFixedPanic}）生效时，恐慌类型不再改变。</p>
+ * 恐慌 / 理智负面效果：
+ * <ul>
+ *   <li>理智值<strong>高</strong>（高于 {@link #WEAKNESS_THRESHOLD}）→ <strong>不添加任何 buff</strong></li>
+ *   <li>理智值<strong>低</strong> → 施加<strong>虚弱</strong>（理智越低等级越高）</li>
+ * </ul>
+ * 恐慌类型仍会记录（供「固定恐慌」使用），但不再施加力量/速度之类的增益。
  */
 @Mod.EventBusSubscriber(modid = MoonProjectMod.MODID)
 public final class PanicEvents {
     public static final String TAG_PANIC = "MoonPanicType";
-    /** 原著里理智低于该值会进入恐慌。 */
-    public static final int PANIC_THRESHOLD = -25;
+    /** 低于该理智值开始虚弱。 */
+    public static final int WEAKNESS_THRESHOLD = -10;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -30,19 +34,26 @@ public final class PanicEvents {
         if (player.tickCount % 20 != 0) {
             return;
         }
+        // 理智被锁定（手持阿赖耶识 / 阿鼻叫唤）时不施加虚弱
+        if (Sanity.hasAbyssCall(player)) {
+            player.getPersistentData().putString(TAG_PANIC, PanicType.NONE.name());
+            return;
+        }
+
         int sanity = Sanity.get(player);
         CompoundTag data = player.getPersistentData();
-        PanicType current = PanicType.valueOf(data.getString(TAG_PANIC).isEmpty() ? "NONE" : data.getString(TAG_PANIC));
+        String stored = data.getString(TAG_PANIC);
+        PanicType current = stored.isEmpty() ? PanicType.NONE : PanicType.valueOf(stored);
 
-        if (sanity > PANIC_THRESHOLD) {
-            // 理智恢复 -> 解除恐慌
+        if (sanity > WEAKNESS_THRESHOLD) {
+            // 理智还不算低：不加任何 buff
             if (current != PanicType.NONE) {
                 data.putString(TAG_PANIC, PanicType.NONE.name());
             }
             return;
         }
 
-        // 需要恐慌：固定恐慌时保持现有类型
+        // 理智偏低：记录恐慌类型（固定恐慌时保持不变）
         if (current == PanicType.NONE || !Sanity.hasFixedPanic(player)) {
             if (current == PanicType.NONE) {
                 current = PanicType.values()[1 + player.getRandom().nextInt(PanicType.values().length - 1)];
@@ -50,24 +61,9 @@ public final class PanicEvents {
             }
         }
 
-        // 施加对应效果（每 20 tick 续一次）
-        int duration = 60;
-        switch (current) {
-            case WRATH -> {
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration, 0));
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, 0));
-            }
-            case DESPAIR -> {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 1));
-                player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 0));
-            }
-            case PANIC -> {
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 0));
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, 1));
-            }
-            default -> {
-            }
-        }
+        // 施加「虚弱」：理智越低等级越高（-10 -> I，-25 -> II，-45 -> IV）
+        int amplifier = Math.max(0, Math.min(3, (-sanity - WEAKNESS_THRESHOLD) / 10));
+        player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, amplifier, false, true));
     }
 
     private PanicEvents() {

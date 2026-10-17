@@ -33,9 +33,10 @@ public final class SinkingEvents {
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
-        if (resolving || !(event.getEntity() instanceof LivingEntity target)) {
+        if (resolving) {
             return;
         }
+        LivingEntity target = event.getEntity();
         MobEffectInstance sinking = target.getEffect(ModEffects.SINKING.get());
         if (sinking == null) {
             return;

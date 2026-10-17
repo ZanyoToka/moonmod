@@ -36,6 +36,8 @@ import net.minecraftforge.fml.common.Mod;
  */
 @Mod.EventBusSubscriber(modid = MoonProjectMod.MODID)
 public final class CombatEvents {
+    /** 禁疗截止时间（游戏刻）。 */
+    public static final String NO_HEAL_UNTIL = "MoonNoHealUntil";
     /** 递归保护：结算类伤害会再次触发命中事件。 */
     private static boolean resolving = false;
     /** 标记"这一下是我们自己延迟落地的伤害"，避免再次进入调度。 */
@@ -86,7 +88,7 @@ public final class CombatEvents {
     /** 无法愈合：带斩痕的目标，任何治疗回复都被取消。 */
     @SubscribeEvent
     public static void onLivingHeal(LivingHealEvent event) {
-        if (event.getEntity().hasEffect(ModEffects.BLACK_SCAR.get())) {
+        if (isNoHeal(event.getEntity())) {
             event.setCanceled(true);
         }
     }
@@ -94,7 +96,7 @@ public final class CombatEvents {
     /** 存在抹除：带斩痕死亡的生物不留遗物。 */
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        if (event.getEntity().hasEffect(ModEffects.BLACK_SCAR.get())) {
+        if (isNoHeal(event.getEntity())) {
             event.getDrops().clear();
         }
     }
@@ -187,8 +189,11 @@ public final class CombatEvents {
             int sanity = Sanity.get(player);
             double headsChance = Math.max(0.05D, Math.min(0.95D, 0.5D + sanity / 200.0D));
             boolean heads = player.getRandom().nextDouble() < headsChance;
+            // 手持阿赖耶识（阿鼻叫唤）时，负币与正币效果互换：反面加成、正面减益
+            boolean inverted = Sanity.hasAbyssCall(player);
+            boolean good = inverted != heads;
             faces.append(heads ? "正" : "反");
-            coinMultiplier += heads ? coinBonus : -coinBonus;
+            coinMultiplier += good ? coinBonus : -coinBonus;
         }
         coinMultiplier = Math.max(0.2D, coinMultiplier);
         total *= (float) coinMultiplier;
@@ -203,7 +208,9 @@ public final class CombatEvents {
                     MoonProjectConfig.poisePerFastSlash(), MoonProjectConfig.poiseMaxStacks());
         }
         // 原著：每个技能对「裂伤」的施加层数各不相同（挥砍4 / 涂抹3 / 泼洒5 / 描绘5 / 天杀4 / 抹去5）
-        addStacks(target, ModEffects.BLEED.get(), skill.laceration, MoonProjectConfig.bleedMaxStacks());
+        // 原著「天杀星刀-阿赖耶识」：技能增加的流血强度额外 +3 级
+        int bleedBonus = Sanity.hasAbyssCall(player) ? 3 : 0;
+        addStacks(target, ModEffects.BLEED.get(), skill.laceration + bleedBonus, MoonProjectConfig.bleedMaxStacks());
 
         for (int coin = 0; coin < skill.coins; coin++) {
             SlashScheduler.schedule(player, target, total / skill.coins, skill.heavy, coin * 2);
@@ -326,7 +333,8 @@ public final class CombatEvents {
     private static void applyCutoff(LivingEntity target, Player player) {
         int cutbond = stackCount(player, ModEffects.CUTBOND.get());
         int extra = Math.min(4, cutbond / 10);
-        addStacks(target, ModEffects.CUTOFF.get(), 1 + extra, MoonProjectConfig.cutoffMaxStacks());
+        // 切丝效率提高：每次命中基础 5 层（阈值同步提高到 100，约 20 次命中触发爆发）
+        addStacks(target, ModEffects.CUTOFF.get(), 5 + extra, MoonProjectConfig.cutoffMaxStacks());
     }
 
     /** 斩断叠满 → 触发「强力技能」：追加一次大伤害并清空层数。 */
@@ -345,14 +353,19 @@ public final class CombatEvents {
     }
 
     /** 施加 / 叠加焦黑斩痕。 */
+    /** 阿赖耶识命中后「禁疗」：一段时间内无法被治疗，死亡也不掉落。 */
     private static void applyScar(LivingEntity target) {
         int duration = MoonProjectConfig.scarDurationTicks();
         if (duration <= 0) {
             return;
         }
-        MobEffectInstance current = target.getEffect(ModEffects.BLACK_SCAR.get());
-        int stacks = current == null ? 1 : Math.min(current.getAmplifier() + 2, MoonProjectConfig.scarMaxStacks());
-        target.addEffect(new MobEffectInstance(ModEffects.BLACK_SCAR.get(), duration, stacks - 1, false, true));
+        target.getPersistentData().putLong(NO_HEAL_UNTIL, target.level().getGameTime() + duration);
+    }
+
+    /** 该生物当前是否处于禁疗状态。 */
+    public static boolean isNoHeal(LivingEntity entity) {
+        long until = entity.getPersistentData().getLong(NO_HEAL_UNTIL);
+        return until > 0L && entity.level().getGameTime() < until;
     }
 
     public static int stackCount(LivingEntity entity, MobEffect effect) {

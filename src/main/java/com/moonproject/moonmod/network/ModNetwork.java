@@ -45,6 +45,12 @@ public final class ModNetwork {
                 .decoder(CastSkillMessage::decode)
                 .consumerMainThread(CastSkillMessage::handle)
                 .add();
+
+        CHANNEL.messageBuilder(SanityMessage.class, 1, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SanityMessage::encode)
+                .decoder(SanityMessage::decode)
+                .consumerMainThread(SanityMessage::handle)
+                .add();
     }
 
     /** 技能编号：0 = 天杀，1 = 将我抹去，也将你抹去。 */
@@ -65,6 +71,25 @@ public final class ModNetwork {
                     CombatEvents.castUltimateByKey(player, message.skill());
                 }
             });
+            ctx.setPacketHandled(true);
+        }
+    }
+
+    /** 理智值同步（服务端 -> 客户端）。 */
+    public record SanityMessage(int sanity) {
+        public static void encode(SanityMessage message, FriendlyByteBuf buffer) {
+            buffer.writeVarInt(message.sanity());
+        }
+
+        public static SanityMessage decode(FriendlyByteBuf buffer) {
+            return new SanityMessage(buffer.readVarInt());
+        }
+
+        public static void handle(SanityMessage message, Supplier<NetworkEvent.Context> context) {
+            NetworkEvent.Context ctx = context.get();
+            ctx.enqueueWork(() -> net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(
+                    net.minecraftforge.api.distmarker.Dist.CLIENT,
+                    () -> () -> com.moonproject.moonmod.client.SanityClient.set(message.sanity())));
             ctx.setPacketHandled(true);
         }
     }
