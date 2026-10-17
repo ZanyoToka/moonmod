@@ -153,10 +153,7 @@ public final class CombatEvents {
      */
     private static Skill pickLeftClickSkill(Player player) {
         if (player.isShiftKeyDown()) {
-            if (stackCount(player, ModEffects.CUTBOND.get()) >= MoonProjectConfig.heavenlyKillCutbondCost()) {
-                takeCutbond(player, MoonProjectConfig.heavenlyKillCutbondCost());
-                return Skill.HEAVENLY_KILL;
-            }
+            // 天杀只通过专属键 R 释放；潜行 + 左键固定为泼洒
             return Skill.SPILL;
         }
         return player.isSprinting() ? Skill.SMEAR : Skill.SLASH;
@@ -228,6 +225,7 @@ public final class CombatEvents {
     public static void applyDelayedHit(Player player, LivingEntity target, float damage, boolean slow) {
         applyingDelayed = true;
         try {
+            target.invulnerableTime = 0; // 绕过 MC 无敌帧，否则多段硬币只有第一段生效
             target.hurt(player.damageSources().playerAttack(player), damage);
 
             // 无我梦中：每次挥出硬币获得斩缘
@@ -394,11 +392,8 @@ public final class CombatEvents {
                     Component.translatable("item.moonproject.alaya_vijnana.skill.no_target"), true);
             return false;
         }
-        boolean erase = stackCount(player, ModEffects.CUTBOND.get()) >= MoonProjectConfig.eraseCutbondCost();
-        if (erase) {
-            takeCutbond(player, MoonProjectConfig.eraseCutbondCost());
-        }
-        Skill skill = erase ? Skill.ERASE : Skill.DEPICT;
+        // 抹去只通过专属键 V 释放；潜行 + 右键固定为描绘
+        Skill skill = Skill.DEPICT;
         float base = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         scheduleSkill(player, target, skill, base);
         tag.putInt(AlayaVijnanaItem.TAG_SKILL_COOLDOWN, MoonProjectConfig.skill3CooldownTicks());

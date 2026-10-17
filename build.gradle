@@ -82,6 +82,9 @@ minecraft {
         }
 
         client {
+            // ForgeGradle 开发环境下第三方 mod 的 mixin 需要 refmap 重映射（Epic Fight 必需）
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
         }
@@ -132,8 +135,12 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // 史诗战斗（Epic Fight）：1.20.1 Forge 版本
-    // 作用：让阿赖耶识/悔恨使用 EF 的武器动作、连段与攻击判定（武器归属由 data/moonproject/capabilities 下的 JSON 决定）
-    implementation fg.deobf('maven.modrinth:epic-fight:20.14.17-mc1.20.1-forge')
+    // ⚠ 2026-10-17 停用（两个版本实测均崩）：20.14.17 / 20.14.8 的 LivingEntityPatch.isAirborneState
+    //   都会读到 null 的 EntityDataAccessor，tick 任意生物（溺尸、苦力怕…）即崩。
+    //   根因指向 EF 的 MixinEntity / MixinMinecraft 注入失败 → 它的同步数据参数没注册上。
+    //   排查方向：Forge 与 EF 的 mixin 环境（mixin 版本 / -Dmixin.env.disableRefMap / EF 官方支持的 Forge 版本）。
+    // 恢复时：取消下面注释，并删掉 run/config 下旧的 epicfight 配置。
+    implementation fg.deobf('maven.modrinth:epic-fight:20.14.8-mc1.20.1-forge')
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

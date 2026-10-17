@@ -417,3 +417,46 @@ v0.5 Boss → v1.0。Phase 3 完成即发 Beta，不憋大招。
   （生成脚本 moonmod/docs/generate_alaya_spec.py，改规格后重跑即可）
 - 代码仓库：工作区 moonmod/ —— 已初始化的 Forge MDK 工程（gradle/settings.gradle/src 就绪），
   代码直接写在这里；实际 modid 为 moonproject、包名 com.moonproject.moonmod
+
+---
+
+## 附：Epic Fight（史诗战斗）接入 —— 已约定长期使用，当前临时停用（2026-10-17）
+
+**用户明确要求：后续必须接回 EF，这是既定方向，不是放弃。**
+
+### 已完成
+- Modrinth 依赖（`maven.modrinth:epic-fight:20.14.17-mc1.20.1-forge`）
+- `data/moonproject/capabilities/weapons/alaya_vijnana.json` → `epicfight:tachi`（大太刀）
+- `data/moonproject/capabilities/weapons/regret.json` → `epicfight:longsword`
+- `assets/moonproject/animmodels/animations/biped/alaya/`（动画目录 + README，命名对齐 epicmoonmod）
+- `docs/reference/ef_weapon_model_template.json`（EF 武器模型结构模板，机器生成的网格数组）
+- Forge 由 47.4.5 升到 **47.4.10**（解决 EF 的 MixinMinecraft/MixinEntity 注入失败）
+
+### 当前停用原因
+EF 20.14.17 的 `LivingEntityPatch.isAirborneState` 读到 null 的 `EntityDataAccessor`，
+**tick「溺尸」时直接 NPE 崩世界**（详见 `run/crash-reports/crash-*.txt`）。这是 EF 自身 bug。
+停用期间 `build.gradle` 中该依赖为注释状态。
+
+### 恢复步骤
+1. 取消 `build.gradle` 里 EF 依赖的注释
+2. 换成没有该 bug 的 EF 版本（20.14.17 是最新 1.20.1 版，需试相邻版本或查 Modrinth 更新日志）
+3. `capabilities` 与动画目录已就位，恢复后自动生效
+
+### 兼容前提
+停用期间战斗实现（`LivingHurtEvent` + `use()` + R/V 网络包）**不依赖 EF**，接回时无需返工；
+但 EF 会接管左键攻击与动画，若与「左键技能」冲突，按 EF 的 **固有技能（InnateSkill）** 迁移，
+或把六个技能统一挪到潜行组合。
+### ✅ 解决（2026-10-17）：mixin refmap 重映射
+
+EF 在 ForgeGradle 开发环境下注入失败，是因为第三方 mixin 需要 **refmap 重映射**。
+在 `build.gradle` 的 `runs { client { ... } }` 里加上这两行即可：
+
+```groovy
+property 'mixin.env.remapRefMap', 'true'
+property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+```
+
+加上后 `Mixin apply failed` 消失，EF 20.14.8 正常工作（`isAirborneState` 的 NPE 也随之消失）。
+**注意**：这不是版本问题——20.14.17 和 20.14.8 在没加 refmap 时表现完全一样（tick 任意生物就崩）。
+
+相关环境：Forge 47.4.10、EF 20.14.8-mc1.20.1-forge、JDK 17（C:\jdk-17）。
