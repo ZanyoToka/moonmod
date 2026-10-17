@@ -31,3 +31,8 @@ forge*changelog.txt
 # 构建与排查日志
 build-log-*.txt
 probe-*.tmp
+
+# 外部工具与中间渲染产物（不入库）
+tools/
+docs/blender_alaya_*.png
+docs/*-preview*.png
