@@ -147,6 +147,11 @@ public final class ObjItemModel implements IUnbakedGeometry<ObjItemModel> {
         }
     }
 
+    /** 该物品是否处于拔刀态。 */
+    public static boolean isDrawn(net.minecraft.world.item.ItemStack stack) {
+        return stack.getTag() != null && stack.getTag().getBoolean("AlayaDrawn");
+    }
+
     /** 只处理 v / vt / f / usemtl 的极简 OBJ 解析器。 */
     public static final class ObjParser {
         private ObjParser() {
