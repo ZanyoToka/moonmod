@@ -232,13 +232,15 @@ public final class CombatEvents {
             addStacks(player, ModEffects.CUTBOND.get(), 1, MoonProjectConfig.cutbondMaxStacks());
 
             if (slow) {
+                // 无我良秀专属：破裂（裂伤）+ 震颤（斩断）+ 阿赖耶识的焦黑斩痕
                 applyScar(target);
-                addStacks(target, ModEffects.BURN.get(), 2, MoonProjectConfig.burnMaxStacks());
                 addStacks(target, ModEffects.LACERATION.get(), 1, MoonProjectConfig.lacerationMaxStacks());
                 applyCutoff(target, player);
             } else {
+                // 小指良那套：流血 + 烧伤
                 addStacks(target, ModEffects.BLEED.get(),
                         MoonProjectConfig.bleedPerFastSlash(), MoonProjectConfig.bleedMaxStacks());
+                addStacks(target, ModEffects.BURN.get(), 1, MoonProjectConfig.burnMaxStacks());
             }
             player.displayClientMessage(describeStacks(target), true);
             resolveCutoff(target);

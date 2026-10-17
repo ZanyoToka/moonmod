@@ -13,7 +13,7 @@
   "item.moonproject.alaya_vijnana.remaining": "解放剩余 %s 秒",
   "item.moonproject.alaya_vijnana.memory": "记忆代价：解放期间每秒 -1 级经验",
   "item.moonproject.alaya_vijnana.memory_empty": "你的记忆已经空了",
-  "item.moonproject.alaya_vijnana.hint": "右键切换形态｜左键=挥砍、疾跑+左键=涂抹、潜行+左键=泼洒、潜行+右键=描绘｜R=天杀、V=抹去",
+  "item.moonproject.alaya_vijnana.hint": "右键切换形态｜左键=挥砍、疾跑+左键=涂抹、潜行+左键=泼洒、潜行+右键=描绘｜N=天杀、M=抹去",
   "item.moonproject.alaya_vijnana.slash.heavy": "天杀 · 燃尽 %s 层呼吸法",
   "item.moonproject.alaya_vijnana.skill.cast.name": "%s！燃尽 %s 层呼吸法",
   "item.moonproject.alaya_vijnana.skill.cooldown": "技能冷却中（%s 秒）",

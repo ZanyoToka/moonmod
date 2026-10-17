@@ -13,7 +13,7 @@
   "item.moonproject.alaya_vijnana.remaining": "%s s of unleash left",
   "item.moonproject.alaya_vijnana.memory": "Memory cost: -1 XP level per second while drawn",
   "item.moonproject.alaya_vijnana.memory_empty": "Your memories are gone",
-  "item.moonproject.alaya_vijnana.hint": "Right-click to switch stance | Left = Slash, sprint+Left = Smear, sneak+Left = Spill, sneak+Right = Depict | R = Heavenly Kill, V = Erase",
+  "item.moonproject.alaya_vijnana.hint": "Right-click to switch stance | Left = Slash, sprint+Left = Smear, sneak+Left = Spill, sneak+Right = Depict | N = Heavenly Kill, M = Erase",
   "item.moonproject.alaya_vijnana.slash.heavy": "Heavenly Kill - burned %s Poise",
   "item.moonproject.alaya_vijnana.skill.cast.name": "%s! burned %s Poise",
   "item.moonproject.alaya_vijnana.skill.cooldown": "Skill on cooldown (%s s)",
