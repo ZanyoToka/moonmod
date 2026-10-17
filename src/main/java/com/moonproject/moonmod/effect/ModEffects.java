@@ -72,6 +72,10 @@ public class ModEffects {
     /** 震颤（Tremor）：通用版叠层 DoT，比「斩断」弱。 */
     public static final RegistryObject<MobEffect> TREMOR =
             EFFECTS.register("tremor", () -> new StackEffect(MobEffectCategory.HARMFUL, 0x5A7BD0));
+    /** 沉沦（Sinking）：原著都市零协会译名。 */
+    public static final RegistryObject<MobEffect> SINKING =
+            EFFECTS.register("sinking", SinkingEffect::new);
+
     private ModEffects() {
     }
 }
