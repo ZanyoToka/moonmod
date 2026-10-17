@@ -1,6 +1,7 @@
 package com.moonproject.moonmod.item;
 
 import com.moonproject.moonmod.MoonProjectMod;
+import com.moonproject.moonmod.init.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -22,6 +23,7 @@ public class ModCreativeTab {
                     .title(Component.translatable("itemGroup.moonproject"))
                     .icon(() -> new ItemStack(ModItems.REGRET.get()))
                     .displayItems((parameters, output) -> {
+                        // 物品与装备
                         output.accept(ModItems.ABNORMALITY_FRAGMENT.get());
                         output.accept(ModItems.EGO_CORE.get());
                         output.accept(ModItems.REGRET.get());
@@ -30,6 +32,9 @@ public class ModCreativeTab {
                         output.accept(ModItems.EGO_CHESTPLATE.get());
                         output.accept(ModItems.EGO_LEGGINGS.get());
                         output.accept(ModItems.EGO_BOOTS.get());
+
+                        // 方块：经验熔炉
+                        output.accept(ModBlocks.EXP_BURNER.get());
                     })
                     .build());
 }
