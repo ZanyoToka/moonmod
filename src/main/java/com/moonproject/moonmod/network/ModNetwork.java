@@ -5,6 +5,8 @@ import com.moonproject.moonmod.event.CombatEvents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -21,7 +23,7 @@ public final class ModNetwork {
     private static final String PROTOCOL = "1";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
-            .named(new ResourceLocation(MoonProjectMod.MODID, "main"))
+            .named(ResourceLocation.fromNamespaceAndPath(MoonProjectMod.MODID, "main"))
             .networkProtocolVersion(() -> PROTOCOL)
             .clientAcceptedVersions(PROTOCOL::equals)
             .serverAcceptedVersions(PROTOCOL::equals)
