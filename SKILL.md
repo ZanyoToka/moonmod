@@ -460,3 +460,22 @@ property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/ou
 **注意**：这不是版本问题——20.14.17 和 20.14.8 在没加 refmap 时表现完全一样（tick 任意生物就崩）。
 
 相关环境：Forge 47.4.10、EF 20.14.8-mc1.20.1-forge、JDK 17（C:\jdk-17）。
+---
+
+## 附：高精度武器模型路线（用户 2026-10-17 确认的后续计划）
+
+参考对象：B 站视频【TacZ】阿赖耶识 —— TacZ（Timeless and Classics: Zero）的武器包体系，
+能做出官方立绘级别的高模刀身 + 拔刀/挥砍动画。TacZ 本身是枪械 mod，不适合直接承载太刀，
+因此本模组采用**等价技术栈**：
+
+| 阶段 | 方案 | 工具 | 产物 |
+|---|---|---|---|
+| ① 方块风（当前） | 原版 `item/handheld` 平面贴图 | 无需建模 | 已有（256×256 官方立绘裁切） |
+| ② 立体方块风 | Blockbench Java Block/Item 3D 模型 | **Blockbench** | `models/item/alaya_vijnana*.json` |
+| ③ 高模写实风 | **Forge 的 OBJ 加载器**（`"loader": "forge:obj"`） | **Blender** | `models/obj/*.obj` + `.mtl` + 高分辨率贴图 |
+| ④ 动作动画 | Epic Fight 动画数据包（`animmodels/animations/biped/alaya/*.json`）或 GeckoLib | Blockbench/Blender + EF 插件 | 拔刀、连段、技能动画 |
+
+关键结论（已实测）：
+- **官方立绘不能直接当 16×16 物品图标**（刀太细长，缩下去会消失）；官方图适合做**模型贴图**。
+- EF 的 mixin 在 ForgeGradle 开发环境必须开 `mixin.env.remapRefMap`，否则注入失败、任意生物 tick 崩服。
+- 战斗逻辑（延迟斩击 / 六技能 / 状态）**不依赖 EF**，EF 只负责渲染与动作层。
