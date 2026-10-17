@@ -3,6 +3,7 @@ package com.moonproject.moonmod.event;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.effect.ModEffects;
+import com.moonproject.moonmod.sanity.Sanity;
 import com.moonproject.moonmod.item.AlayaVijnanaItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -177,6 +178,22 @@ public final class CombatEvents {
         int poise = stackCount(player, ModEffects.POISE.get());
         double multiplier = skill.ratio * (1.0D + poise * MoonProjectConfig.slowSlashPoiseBonus());
         float total = (float) (baseDamage * multiplier);
+        // 原著「硬币系统」：每个技能有若干枚硬币，每枚随机正面（威力 +20%）或反面（威力 -20%）
+        final double coinBonus = 0.20D;
+        double coinMultiplier = 1.0D;
+        StringBuilder faces = new StringBuilder();
+        for (int i = 0; i < skill.coins; i++) {
+            // 理智值影响硬币正负概率：50% ± (理智 / 200)，理智 ±45 => 27.5% ~ 72.5%
+            int sanity = Sanity.get(player);
+            double headsChance = Math.max(0.05D, Math.min(0.95D, 0.5D + sanity / 200.0D));
+            boolean heads = player.getRandom().nextDouble() < headsChance;
+            faces.append(heads ? "正" : "反");
+            coinMultiplier += heads ? coinBonus : -coinBonus;
+        }
+        coinMultiplier = Math.max(0.2D, coinMultiplier);
+        total *= (float) coinMultiplier;
+        player.displayClientMessage(Component.literal(
+                "硬币 " + faces + "  ×" + String.format("%.2f", coinMultiplier)), true);
         if (skill.heavy) {
             player.removeEffect(ModEffects.POISE.get());
             player.displayClientMessage(Component.translatable(

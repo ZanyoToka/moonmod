@@ -76,6 +76,10 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> SINKING =
             EFFECTS.register("sinking", SinkingEffect::new);
 
+    /** 充能（Charge）：原著「特定技能发动附加效果所需的资源，最大 20 层，回合结束 -1 层」。 */
+    public static final RegistryObject<MobEffect> CHARGE =
+            EFFECTS.register("charge", () -> new StackEffect(MobEffectCategory.BENEFICIAL, 0x33D6E0));
+
     private ModEffects() {
     }
 }

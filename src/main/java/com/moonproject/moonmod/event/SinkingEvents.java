@@ -47,11 +47,11 @@ public final class SinkingEvents {
 
         resolving = true;
         try {
-            if (target instanceof Player player) {
-                // 有理智值：扣理智（阿鼻叫唤时自动转 3 倍体力伤害）
-                Sanity.damage(player, potency);
+            if (Sanity.hasSanity(target)) {
+                // 有理智值（玩家 / 人类型怪物）：扣理智（阿鼻叫唤时自动转 3 倍体力伤害）
+                Sanity.damage(target, potency);
             } else {
-                // 无理智值：受到忧郁属性伤害
+                // 无理智值（蜘蛛、苦力怕、异想体等）：受到忧郁属性伤害
                 target.hurt(target.damageSources().magic(), potency);
             }
         } finally {
