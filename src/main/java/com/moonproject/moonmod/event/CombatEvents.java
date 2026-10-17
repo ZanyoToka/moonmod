@@ -129,23 +129,25 @@ public final class CombatEvents {
 
     /** 原著「无我良秀」的六个技能。coins 用多段延迟命表现，ratio 是相对面板伤害的倍率。 */
     private enum Skill {
-        SLASH("挥砍", 2, 1.00D, false),
-        SMEAR("涂抹", 2, 1.00D, false),
-        SPILL("泼洒", 3, 1.25D, false),
-        DEPICT("描绘", 3, 1.25D, true),
-        HEAVENLY_KILL("天杀", 5, 2.00D, true),
-        ERASE("将我抹去，也将你抹去。", 5, 3.00D, true);
+        SLASH("挥砍", 2, 1.00D, false, 4),
+        SMEAR("涂抹", 2, 1.00D, false, 3),
+        SPILL("泼洒", 3, 1.25D, false, 5),
+        DEPICT("描绘", 3, 1.25D, true, 5),
+        HEAVENLY_KILL("天杀", 5, 2.00D, true, 4),
+        ERASE("将我抹去，也将你抹去。", 5, 3.00D, true, 5);
 
         final String display;
         final int coins;
         final double ratio;
         final boolean heavy;
+        final int laceration;
 
-        Skill(String display, int coins, double ratio, boolean heavy) {
+        Skill(String display, int coins, double ratio, boolean heavy, int laceration) {
             this.display = display;
             this.coins = coins;
             this.ratio = ratio;
             this.heavy = heavy;
+            this.laceration = laceration;
         }
     }
 
@@ -183,6 +185,9 @@ public final class CombatEvents {
             addStacks(player, ModEffects.POISE.get(),
                     MoonProjectConfig.poisePerFastSlash(), MoonProjectConfig.poiseMaxStacks());
         }
+        // 原著：每个技能对「裂伤」的施加层数各不相同（挥砍4 / 涂抹3 / 泼洒5 / 描绘5 / 天杀4 / 抹去5）
+        addStacks(target, ModEffects.BLEED.get(), skill.laceration, MoonProjectConfig.bleedMaxStacks());
+
         for (int coin = 0; coin < skill.coins; coin++) {
             SlashScheduler.schedule(player, target, total / skill.coins, skill.heavy, coin * 2);
         }
@@ -236,15 +241,10 @@ public final class CombatEvents {
             if (slow) {
                 // 阿赖耶识专属（原著「裂伤 / 斩断」）：裂伤 + 斩断 + 焦黑斩痕
                 applyScar(target);
-                addStacks(target, ModEffects.LACERATION.get(), 1, MoonProjectConfig.lacerationMaxStacks());
                 applyCutoff(target, player);
             } else {
                 // 小指良那套：流血 + 烧伤
-                addStacks(target, ModEffects.BLEED.get(),
-                        MoonProjectConfig.bleedPerFastSlash(), MoonProjectConfig.bleedMaxStacks());
-                addStacks(target, ModEffects.BURN.get(), 1, MoonProjectConfig.burnMaxStacks());
                 // 遵循原著：左键系也施加「裂伤 / 斩断」（与 N/M 同一套，不再用通用版）
-                addStacks(target, ModEffects.LACERATION.get(), 1, MoonProjectConfig.lacerationMaxStacks());
                 applyCutoff(target, player);
             }
             // 状态显示交给准星 HUD（StatusHudOverlay），这里不再重复打到动作栏
