@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "moonproject:item/alaya_vijnana_drawn"
-  }
-}
