@@ -1,6 +1,7 @@
 package com.moonproject.moonmod.item;
 
 import com.moonproject.moonmod.MoonProjectMod;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
@@ -30,9 +31,39 @@ public class ModItems {
 
     /**
      * E.G.O 武器「悔恨」（一罪与百善）：
-     * 钻石级属性，攻击伤害 7（3+4），攻速 -2.4。
+     * 面板伤害 <b>10</b>（1 + 下界合金 3 + 6）、攻速 1.8 次/秒、耐久 2031 ——
+     * 全面强于原版最强的下界合金剑（面板 8 / 1.6 次每秒），符合"模组装备强于原版最强"原则。
      * 阶段二会给它加粒子特效与对亡灵特攻。
      */
     public static final RegistryObject<Item> REGRET = ITEMS.register("regret",
-            () -> new SwordItem(Tiers.DIAMOND, 4, -2.4F, new Item.Properties()));
+            () -> new SwordItem(Tiers.NETHERITE, 6, -2.2F, new Item.Properties().fireResistant()));
+
+    // ===== E.G.O 装甲（4 件，全项强于下界合金；详见 EgoArmorMaterial）=====
+
+    /** E.G.O 头盔：护甲 4 / 韧性 4 / 击退抗性 0.25。 */
+    public static final RegistryObject<Item> EGO_HELMET = ITEMS.register("ego_helmet",
+            () -> new ArmorItem(EgoArmorMaterial.INSTANCE, ArmorItem.Type.HELMET,
+                    new Item.Properties().fireResistant()));
+
+    /** E.G.O 胸甲：护甲 9 / 韧性 4。 */
+    public static final RegistryObject<Item> EGO_CHESTPLATE = ITEMS.register("ego_chestplate",
+            () -> new ArmorItem(EgoArmorMaterial.INSTANCE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().fireResistant()));
+
+    /** E.G.O 护腿：护甲 7 / 韧性 4。 */
+    public static final RegistryObject<Item> EGO_LEGGINGS = ITEMS.register("ego_leggings",
+            () -> new ArmorItem(EgoArmorMaterial.INSTANCE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().fireResistant()));
+
+    /** E.G.O 靴子：护甲 4 / 韧性 4。 */
+    public static final RegistryObject<Item> EGO_BOOTS = ITEMS.register("ego_boots",
+            () -> new ArmorItem(EgoArmorMaterial.INSTANCE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().fireResistant()));
+
+    /**
+     * 天杀星刀·阿赖耶识（设计规格书 5.2b）：
+     * 鞘击 / 拔刀双形态，面板伤害与攻速由 AlayaAttributeHandler 按形态下发，数值全在 Config。
+     */
+    public static final RegistryObject<Item> ALAYA_VIJNANA = ITEMS.register("alaya_vijnana",
+            () -> new AlayaVijnanaItem(new Item.Properties().stacksTo(1).fireResistant()));
 }

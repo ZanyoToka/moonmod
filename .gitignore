@@ -23,3 +23,11 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+
+# 工作区内的 Gradle 缓存（沙箱限制下替代 ~/.gradle 的 GRADLE_USER_HOME）
+.gradle-home
+.gradle-native
+
+# 构建与排查日志
+build-log-*.txt
+probe-*.tmp

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E E",
+    "EEE",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "moonproject:ego_core"
+    }
+  },
+  "result": {
+    "item": "moonproject:ego_chestplate"
+  }
+}

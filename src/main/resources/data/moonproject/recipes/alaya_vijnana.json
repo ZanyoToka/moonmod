@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FEF",
+    "ENE",
+    " S "
+  ],
+  "key": {
+    "F": {
+      "item": "moonproject:abnormality_fragment"
+    },
+    "E": {
+      "item": "moonproject:ego_core"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "moonproject:alaya_vijnana",
+    "count": 1
+  }
+}
