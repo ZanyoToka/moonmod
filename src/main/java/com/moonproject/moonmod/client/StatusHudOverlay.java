@@ -93,6 +93,8 @@ public final class StatusHudOverlay {
         return effect == ModEffects.BLEED.get()
                 || effect == ModEffects.BURN.get()
                 || effect == ModEffects.BLACK_SCAR.get()
+                || effect == ModEffects.RUPTURE.get()
+                || effect == ModEffects.TREMOR.get()
                 || effect == ModEffects.LACERATION.get()
                 || effect == ModEffects.CUTOFF.get();
     }
@@ -106,6 +108,12 @@ public final class StatusHudOverlay {
         }
         if (effect == ModEffects.BLACK_SCAR.get()) {
             return 0xC0603A;
+        }
+        if (effect == ModEffects.RUPTURE.get()) {
+            return 0xD070B0;
+        }
+        if (effect == ModEffects.TREMOR.get()) {
+            return 0x7FA0FF;
         }
         if (effect == ModEffects.LACERATION.get()) {
             return 0xFF80A0;

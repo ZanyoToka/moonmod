@@ -63,6 +63,15 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> CUTBOND =
             EFFECTS.register("cutbond", () -> new StackEffect(MobEffectCategory.BENEFICIAL, 0xB0C8E8));
 
+    // ==================== 通用状态（裂伤 / 斩断 是它们的升级版）====================
+
+    /** 破裂（Rupture）：通用版流血类 DoT，比「裂伤」弱。 */
+    public static final RegistryObject<MobEffect> RUPTURE =
+            EFFECTS.register("rupture", () -> new StackEffect(MobEffectCategory.HARMFUL, 0x9B3A6B));
+
+    /** 震颤（Tremor）：通用版叠层 DoT，比「斩断」弱。 */
+    public static final RegistryObject<MobEffect> TREMOR =
+            EFFECTS.register("tremor", () -> new StackEffect(MobEffectCategory.HARMFUL, 0x5A7BD0));
     private ModEffects() {
     }
 }

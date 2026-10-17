@@ -57,6 +57,8 @@ public final class CombatEvents {
             // 原著 DoT：命中时按层数结算并减层
             resolveStackDot(target, ModEffects.BLEED.get(), 1);
             resolveStackDot(target, ModEffects.LACERATION.get(), 2);
+            resolveStackDot(target, ModEffects.RUPTURE.get(), 1);   // 通用版（弱化）
+            resolveStackDot(target, ModEffects.TREMOR.get(), 1);    // 通用版（弱化）
             // 支离灭裂：斩缘 + 对手斩断 减伤
             applyMitigation(event);
 
@@ -232,7 +234,7 @@ public final class CombatEvents {
             addStacks(player, ModEffects.CUTBOND.get(), 1, MoonProjectConfig.cutbondMaxStacks());
 
             if (slow) {
-                // 无我良秀专属：破裂（裂伤）+ 震颤（斩断）+ 阿赖耶识的焦黑斩痕
+                // 阿赖耶识专属（原著「裂伤 / 斩断」）：裂伤 + 斩断 + 焦黑斩痕
                 applyScar(target);
                 addStacks(target, ModEffects.LACERATION.get(), 1, MoonProjectConfig.lacerationMaxStacks());
                 applyCutoff(target, player);
@@ -241,8 +243,11 @@ public final class CombatEvents {
                 addStacks(target, ModEffects.BLEED.get(),
                         MoonProjectConfig.bleedPerFastSlash(), MoonProjectConfig.bleedMaxStacks());
                 addStacks(target, ModEffects.BURN.get(), 1, MoonProjectConfig.burnMaxStacks());
+                // 遵循原著：左键系也施加「裂伤 / 斩断」（与 N/M 同一套，不再用通用版）
+                addStacks(target, ModEffects.LACERATION.get(), 1, MoonProjectConfig.lacerationMaxStacks());
+                applyCutoff(target, player);
             }
-            player.displayClientMessage(describeStacks(target), true);
+            // 状态显示交给准星 HUD（StatusHudOverlay），这里不再重复打到动作栏
             resolveCutoff(target);
         } finally {
             applyingDelayed = false;
@@ -353,6 +358,8 @@ public final class CombatEvents {
         appendStack(text, target, ModEffects.BLEED.get());
         appendStack(text, target, ModEffects.BURN.get());
         appendStack(text, target, ModEffects.LACERATION.get());
+        appendStack(text, target, ModEffects.RUPTURE.get());
+        appendStack(text, target, ModEffects.TREMOR.get());
         appendStack(text, target, ModEffects.CUTOFF.get());
         appendStack(text, target, ModEffects.BLACK_SCAR.get());
         return text;
