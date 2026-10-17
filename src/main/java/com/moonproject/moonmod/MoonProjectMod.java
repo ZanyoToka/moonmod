@@ -43,7 +43,7 @@ public class MoonProjectMod {
         ModEffects.EFFECTS.register(modEventBus);
 
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);
 
         LOGGER.info("[月亮计划] 模组加载成功。");
     }
