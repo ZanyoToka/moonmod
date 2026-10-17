@@ -568,3 +568,29 @@ property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/ou
 - 三段贴图：`alaya_tex_sheath.png`（白鞘+红字）/ `alaya_tex_tsuba.png`（金护手）/ `alaya_tex_hilt.png`（红白柄卷）
 - 刀身贴图：`alaya_vijnana_drawn.png`
 - 参考侧视图：`alaya_sword_tex.png`
+---
+
+## 附：阿赖耶识 3D 物品 display 最终参数（用户 2026-10-18 确认"位置完美"）
+
+```json
+"display": {
+  "thirdperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, 0, 12], "scale": [0.75, 0.75, 0.75] },
+  "firstperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, -3, 11], "scale": [0.72, 0.72, 0.72] },
+  "gui": { "rotation": [-90, 0, 45], "translation": [0, 6, 0], "scale": [1.0, 1.0, 1.0] }
+}
+```
+
+**轴的实际含义（踩坑记录）**：MC 的 display 是**先平移、后旋转**，所以 `translation` 用的是**模型自己的轴**。
+在 `rotation [90, -90, 45]` 下：
+- `translation[0]`(X) → 世界**左右**
+- `translation[1]`(Y) → 世界**前后**
+- `translation[2]`(Z) → 世界**上下**
+
+**rotation[2]（第三个数）= 倾斜角**（45 = 刀尖向上 45°）。
+
+## 3D 渲染方案（最终可用）
+- 自定义 `moonproject:obj_item` 几何加载器（`client/obj/ObjItemModel.java`）自行解析 OBJ+MTL → BakedQuad
+- 注册：`client/ObjModelRegistration.java` 使用 **`ModelEvent.RegisterGeometryLoaders.register("obj_item", loader)`**（String 参数，不含 modid）
+- 贴图必须是 **2 的幂**且**不透明**（透明像素会导致部件"消失"）
+- UV 用 Blender 的 **Smart UV Project** 重展后才会有细节
+- 物品栏图标与手持共用同一模型（2D/3D 分离需要 BEWLR，尝试失败，未采用）
