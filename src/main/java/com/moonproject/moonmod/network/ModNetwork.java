@@ -51,6 +51,12 @@ public final class ModNetwork {
                 .decoder(SanityMessage::decode)
                 .consumerMainThread(SanityMessage::handle)
                 .add();
+
+        CHANNEL.messageBuilder(CoinMessage.class, 2, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(CoinMessage::encode)
+                .decoder(CoinMessage::decode)
+                .consumerMainThread(CoinMessage::handle)
+                .add();
     }
 
     /** 技能编号：0 = 天杀，1 = 将我抹去，也将你抹去。 */
@@ -90,6 +96,28 @@ public final class ModNetwork {
             ctx.enqueueWork(() -> net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(
                     net.minecraftforge.api.distmarker.Dist.CLIENT,
                     () -> () -> com.moonproject.moonmod.client.SanityClient.set(message.sanity())));
+            ctx.setPacketHandled(true);
+        }
+    }
+
+    /** 硬币结果同步（服务端 -> 客户端），mask 的第 i 位为 1 表示第 i 枚正面。 */
+    public record CoinMessage(int mask, int count, double multiplier) {
+        public static void encode(CoinMessage message, FriendlyByteBuf buffer) {
+            buffer.writeVarInt(message.mask());
+            buffer.writeVarInt(message.count());
+            buffer.writeDouble(message.multiplier());
+        }
+
+        public static CoinMessage decode(FriendlyByteBuf buffer) {
+            return new CoinMessage(buffer.readVarInt(), buffer.readVarInt(), buffer.readDouble());
+        }
+
+        public static void handle(CoinMessage message, Supplier<NetworkEvent.Context> context) {
+            NetworkEvent.Context ctx = context.get();
+            ctx.enqueueWork(() -> net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(
+                    net.minecraftforge.api.distmarker.Dist.CLIENT,
+                    () -> () -> com.moonproject.moonmod.client.CoinClient.set(
+                            message.mask(), message.count(), message.multiplier())));
             ctx.setPacketHandled(true);
         }
     }

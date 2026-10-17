@@ -197,8 +197,19 @@ public final class CombatEvents {
         }
         coinMultiplier = Math.max(0.2D, coinMultiplier);
         total *= (float) coinMultiplier;
-        player.displayClientMessage(Component.literal(
-                "硬币 " + faces + "  ×" + String.format("%.2f", coinMultiplier)), true);
+        // 硬币结果通过 CoinMessage 同步给客户端，由 CoinHudOverlay 用图标显示（理智圆环下方）
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            int mask = 0;
+            for (int i = 0; i < faces.length(); i++) {
+                if (faces.charAt(i) == '正') {
+                    mask |= 1 << i;
+                }
+            }
+            net.minecraftforge.network.PacketDistributor.PacketTarget coinTarget =
+                    net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> serverPlayer);
+            com.moonproject.moonmod.network.ModNetwork.CHANNEL.send(coinTarget,
+                    new com.moonproject.moonmod.network.ModNetwork.CoinMessage(mask, faces.length(), coinMultiplier));
+        }
         if (skill.heavy) {
             player.removeEffect(ModEffects.POISE.get());
             player.displayClientMessage(Component.translatable(

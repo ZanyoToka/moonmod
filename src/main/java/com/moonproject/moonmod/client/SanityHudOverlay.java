@@ -36,8 +36,9 @@ public final class SanityHudOverlay {
         int screenHeight = event.getWindow().getGuiScaledHeight();
 
         // 准星右侧偏下，避免挡住准星与准星 HUD 的目标状态列表
-        int x = screenWidth / 2 - SIZE - 6;
-        int y = screenHeight / 2 + 10;
+        // 屏幕左上角
+        int x = 6;
+        int y = 6;
 
         graphics.blit(sanity < 0 ? RING_RED : RING_BLUE, x, y, 0, 0, SIZE, SIZE, SIZE, SIZE);
 
