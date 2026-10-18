@@ -1,15 +1,22 @@
 @echo off
 chcp 936 >nul
-title ÔÂÁÁ¼Æ»®Ä£×é - Æô¶¯ÓÎÏ·
+title ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ä£ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·
 cd /d "%~dp0"
 set "JAVA_HOME=C:\jdk-17"
-set "GRADLE_USER_HOME=C:\Users\23586\.gradle"
+if exist "%JAVA_HOME%\bin\java.exe" goto java_ready
+for /d %%J in ("C:\Program Files\Eclipse Adoptium\jdk-17*") do if exist "%%~fJ\bin\java.exe" set "JAVA_HOME=%%~fJ"
+if exist "%JAVA_HOME%\bin\java.exe" goto java_ready
+echo ERROR: JDK 17 was not found at C:\jdk-17 or under C:\Program Files\Eclipse Adoptium.
+pause
+exit /b 1
+:java_ready
+set "GRADLE_USER_HOME=%USERPROFILE%\.gradle"
 echo ================================================================
-echo   Æô¶¯ Minecraft Ä£×é¿ª·¢»·¾³
-echo   ÓÎÏ·´°¿Ú³öÏÖÇ°Çë²»Òª¹ØÕâ¸öºÚ´°¿Ú
+echo   ï¿½ï¿½ï¿½ï¿½ Minecraft Ä£ï¿½é¿ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+echo   ï¿½ï¿½Ï·ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½Ç°ï¿½ë²»Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
 echo ================================================================
 echo.
 call gradlew.bat runClient --console=plain
 echo.
-echo ÓÎÏ·ÒÑÍË³ö¡£Èç¹ûÓÐ±¨´í£¬Çë°ÑÉÏÃæµÄÄÚÈÝ·¢¸øÎÒ¡£
+echo ï¿½ï¿½Ï·ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½
 pause

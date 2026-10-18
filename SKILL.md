@@ -62,7 +62,7 @@ description: 《月亮计划三部曲》MC 同人模组（Minecraft 1.20.1 + For
 |---|---|
 | **Gradle JVM / 工具链** | **`C:\jdk-17`** —— Temurin 17.0.20.1，由 `…\default-workspace\tools\jdk-17.0.20.1+1` 复制出来的副本 |
 | IDEA | Community 2026.2.3；`设置 → 构建、执行、部署 → 构建工具 → Gradle → Gradle JVM` 必须选 `C:\jdk-17` |
-| Gradle | wrapper 8.8，`distributionUrl` 指向腾讯镜像；缓存用默认的 `C:\Users\23586\.gradle` |
+| Gradle | wrapper 8.8，`distributionUrl` 指向腾讯镜像；缓存用默认的 `%USERPROFILE%\.gradle` |
 | 依赖源 | maven.minecraftforge.net ≈ 500 KB/s；阿里云镜像已加在 build.gradle / settings.gradle |
 | ⚠ 系统 PATH 的 java | Oracle JDK 21/22 —— **不能用于本工程** |
 | ⚠ 工作区内的 JDK | `…\default-workspace\tools\jdk-17.0.20.1+1` —— **不要拿来跑 Gradle**（会被沙箱化） |

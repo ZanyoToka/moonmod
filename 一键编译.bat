@@ -1,33 +1,40 @@
 @echo off
 chcp 936 >nul
-title ÔÂÁÁ¼Æ»®Ä£×é - ±àÒë
+title ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ä£ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½
 cd /d "%~dp0"
-rem ¹Ø¼ü£º±ØÐëÓÃ¹¤×÷ÇøÍâµÄ JDK£¨¹¤×÷ÇøÄÚµÄ JDK »áÈÃ½ø³Ì¼Ì³ÐÉ³Ïä¡¢Ð´²»ÁË ~/.gradle£©
+rem ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ JDKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ JDK ï¿½ï¿½ï¿½Ã½ï¿½ï¿½Ì¼Ì³ï¿½É³ï¿½ä¡¢Ð´ï¿½ï¿½ï¿½ï¿½ ~/.gradleï¿½ï¿½
 set "JAVA_HOME=C:\jdk-17"
-set "GRADLE_USER_HOME=C:\Users\23586\.gradle"
+if exist "%JAVA_HOME%\bin\java.exe" goto java_ready
+for /d %%J in ("C:\Program Files\Eclipse Adoptium\jdk-17*") do if exist "%%~fJ\bin\java.exe" set "JAVA_HOME=%%~fJ"
+if exist "%JAVA_HOME%\bin\java.exe" goto java_ready
+echo ERROR: JDK 17 was not found at C:\jdk-17 or under C:\Program Files\Eclipse Adoptium.
+pause
+exit /b 1
+:java_ready
+set "GRADLE_USER_HOME=%USERPROFILE%\.gradle"
 echo ================================================================
-echo   ÔÂÁÁ¼Æ»®Ä£×é - ±àÒë
+echo   ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ä£ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½
 echo   JAVA_HOME=%JAVA_HOME%
 echo ================================================================
 echo.
 call gradlew.bat compileJava --console=plain
 if not errorlevel 1 goto ok
 echo.
-echo [ÖØÊÔ] ¸ÄÓÃ¹¤×÷Çø»º´æ
+echo [ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 set "GRADLE_USER_HOME=%~dp0.gradle-home"
 call gradlew.bat compileJava --console=plain
 if not errorlevel 1 goto ok
 echo.
 echo ================================================================
-echo   Ê§°ÜÁË£¬Çë°ÑÉÏÃæÈ«²¿ÄÚÈÝ·¢¸øÎÒ
+echo   Ê§ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½
 echo ================================================================
 pause
 exit /b 1
 :ok
 echo.
 echo ================================================================
-echo   ±àÒë³É¹¦ BUILD SUCCESSFUL
-echo   ÏÂÒ»²½£ºË«»÷×ÀÃæµÄ¡¸Æô¶¯Ä£×éÓÎÏ·¡¹
+echo   ï¿½ï¿½ï¿½ï¿½É¹ï¿½ BUILD SUCCESSFUL
+echo   ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½
 echo ================================================================
 pause
 exit /b 0
