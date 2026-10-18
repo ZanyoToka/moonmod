@@ -624,3 +624,34 @@ property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/ou
 ### 沉沦（Sinking）
 `SinkingEffect`：amplifier + 1 = 强度，层数存实体 NBT `MoonSinkingLayers`；
 有理智目标扣理智，无理智目标吃忧郁魔法伤害。
+---
+
+## 场谐振能源采集单元：工作界面设计（2026-10-18）
+
+### 界面布局（底图 `textures/gui/resonance_gui.png`，1536x1024，游戏内按 256x171 缩放显示）
+- **左侧 4 个按钮**：压迫 / 沟通 / 洞察 / 本能（图标见 `textures/gui/work_*.png`）
+- **中央槽位**：放「异想体核心」（不消耗；放入后每次工作有 1% 概率生成对应异想体）
+- **右侧槽位**：脑啡肽产出（绿色瓶子造型）
+- **底部槽位**：3% 概率产出该异想体的「异想体饰品」（后期实现）
+
+### 工作流程
+1. 放入异想体核心 → 左侧 4 个按钮激活
+2. 点击任一工作方式 → 开始工作（约 35 秒 / 700 ticks）
+3. 完成后按「核心对应该工作方式的倾向」产出不同数量的脑啡肽，进入右侧槽位
+4. 同时掷一次 3% 判定 → 命中则底部槽位产出异想体饰品
+5. 另有 1% 判定 → 直接生成对应异想体
+
+### 数据模型（待实现）
+```
+ResonanceCollectorBlockEntity
+  ITEMS: [核心槽, 产出槽, 饰品槽]
+  NBT:  WorkType(0-3) / WorkProgress / WorkTotal(700)
+        CoreId(异想体标识) / ProducedTick
+```
+
+### 实现顺序（分步提交）
+1. `BlockEntity` + `Menu`（槽位与同步）
+2. `Screen`（底图 + 4 按钮 + 槽位绘制）
+3. 工作计时逻辑 + 产出结算
+4. 异想体核心物品与异想体实体
+5. 异想体饰品

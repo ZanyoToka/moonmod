@@ -36,6 +36,7 @@ public class ModCreativeTab {
 
                         // 方块：经验熔炉
                         output.accept(ModBlocks.EXP_BURNER.get());
+                output.accept(ModBlocks.RESONANCE_COLLECTOR.get());
                     })
                     .build());
 }
