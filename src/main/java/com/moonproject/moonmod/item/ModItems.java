@@ -64,6 +64,10 @@ public class ModItems {
      * 天杀星刀·阿赖耶识（设计规格书 5.2b）：
      * 鞘击 / 拔刀双形态，面板伤害与攻速由 AlayaAttributeHandler 按形态下发，数值全在 Config。
      */
+    /** 脑啡肽：从异想体提取的资源，后续用于在工作方块合成 E.G.O 装备。 */
+    public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
+            () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> ALAYA_VIJNANA = ITEMS.register("alaya_vijnana",
             () -> new AlayaVijnanaItem(new Item.Properties().stacksTo(1).fireResistant()));
 }
