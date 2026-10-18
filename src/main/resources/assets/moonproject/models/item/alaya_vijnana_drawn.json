@@ -1,23 +1,6 @@
 {
-  "loader": "moonproject:obj_item",
-  "model": "moonproject:models/obj/alaya_drawn.obj",
-  "flip_v": true,
+  "parent": "minecraft:item/handheld",
   "textures": {
-    "particle": "moonproject:item/blade_solid",
-    "BladeSteel": "moonproject:item/blade_solid",
-    "TsubaGold": "moonproject:item/tsuba_solid",
-    "GoldFit":   "moonproject:item/tsuba_solid",
-    "HiltMat":   "moonproject:item/hilt_solid",
-    "SheathMat": "moonproject:item/sheath_new"
-  },
-          "display": {
-    "thirdperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, 0, 12], "scale": [0.75, 0.75, 0.75] },
-    "thirdperson_lefthand":  { "rotation": [-90, 90, 45], "translation": [-5, 10, 1], "scale": [0.75, 0.75, 0.75] },
-    "firstperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, -3, 11], "scale": [0.72, 0.72, 0.72] },
-    "firstperson_lefthand":  { "rotation": [90, 90, -45], "translation": [6, 10, -8], "scale": [0.72, 0.72, 0.72] },
-    "gui": { "rotation": [-90, 0, 45], "translation": [0, 6, 0], "scale": [1.0, 1.0, 1.0] },
-    "ground": { "rotation": [-90, 0, 0], "translation": [0, 2, 0], "scale": [0.6, 0.6, 0.6] },
-    "head": { "rotation": [90, 180, 0], "translation": [0, 13, 7], "scale": [0.8, 0.8, 0.8] },
-    "fixed": { "rotation": [90, 180, 0], "translation": [0, 0, 0], "scale": [0.7, 0.7, 0.7] }
+    "layer0": "moonproject:item/alaya_vijnana_drawn"
   }
 }

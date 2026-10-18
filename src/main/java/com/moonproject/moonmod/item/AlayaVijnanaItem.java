@@ -30,7 +30,6 @@ import java.util.List;
  * <p>尚未实现（见设计规格书第 7.4 节）：记忆代价、焦黑斩痕、概念抹除、粒子音效。</p>
  */
 public class AlayaVijnanaItem extends SwordItem {
-
     /** 是否处于解放态。 */
     public static final String TAG_DRAWN = "AlayaDrawn";
     /** 解放态剩余 tick。 */
