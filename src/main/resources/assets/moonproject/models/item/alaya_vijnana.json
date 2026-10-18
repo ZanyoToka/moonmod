@@ -3,8 +3,8 @@
   "model": "moonproject:models/obj/alaya_sheathed.obj",
   "flip_v": true,
   "textures": {
-    "particle": "moonproject:item/sheath_solid",
-    "SheathMat": "moonproject:item/sheath_solid",
+    "particle": "moonproject:item/sheath_new",
+    "SheathMat": "moonproject:item/sheath_new",
     "GoldFit":   "moonproject:item/tsuba_solid",
     "TsubaGold": "moonproject:item/tsuba_solid",
     "HiltMat":   "moonproject:item/hilt_solid",
