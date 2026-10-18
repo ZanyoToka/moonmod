@@ -31,3 +31,6 @@ forge*changelog.txt
 # 构建与排查日志
 build-log-*.txt
 probe-*.tmp
+
+# 外部工具仓库（不纳入版本控制）
+tools/
