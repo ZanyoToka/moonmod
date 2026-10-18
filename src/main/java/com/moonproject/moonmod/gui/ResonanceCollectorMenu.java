@@ -37,9 +37,15 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
                 ? collector.getItems() : new SimpleContainer(BLOCK_SLOTS);
 
         // 方块槽位（坐标按 GUI 底图估计，Screen 里可再微调）
-        this.addSlot(new Slot(container, 0, 78, 59));   // 中央：异想体核心
-        this.addSlot(new Slot(container, 1, 148, 46));   // 右侧：脑啡肽
-        this.addSlot(new Slot(container, 2, 148, 99));  // 底部：饰品
+        this.addSlot(new Slot(container, 0, 78, 59) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                // 中央槽只接受「异想体核心」
+                return stack.is(com.moonproject.moonmod.item.ModItems.ABNORMALITY_CORE.get());
+            }
+        });   // 中央：异想体核心
+        this.addSlot(new Slot(container, 1, 130, 46));   // 右侧：脑啡肽
+        this.addSlot(new Slot(container, 2, 130, 81));  // 底部：饰品
 
         // 玩家背包 27 格
         for (int row = 0; row < 3; row++) {

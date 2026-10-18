@@ -26,6 +26,7 @@ public class ModCreativeTab {
                         // 物品与装备
                         output.accept(ModItems.ABNORMALITY_FRAGMENT.get());
                         output.accept(ModItems.EGO_CORE.get());
+                output.accept(ModItems.ABNORMALITY_CORE.get());
                 output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.REGRET.get());
                         output.accept(ModItems.ALAYA_VIJNANA.get());

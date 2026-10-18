@@ -65,6 +65,10 @@ public class ModItems {
      * 鞘击 / 拔刀双形态，面板伤害与攻速由 AlayaAttributeHandler 按形态下发，数值全在 Config。
      */
     /** 脑啡肽：从异想体提取的资源，后续用于在工作方块合成 E.G.O 装备。 */
+    /** 异想体核心：放进采集单元的中央槽，用来指定要提取的异想体。 */
+    public static final RegistryObject<Item> ABNORMALITY_CORE = ITEMS.register("abnormality_core",
+            () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
             () -> new Item(new Item.Properties()));
 

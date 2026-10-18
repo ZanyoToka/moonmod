@@ -10,16 +10,27 @@ import net.minecraft.world.entity.player.Inventory;
 /**
  * 场谐振能源采集单元的界面。
  *
- * <p>底图 {@code textures/gui/resonance_gui_full.png}（1536x1024）按 256x171 缩放绘制；
- * 左侧四个工作按钮与进度条在后续版本追加。</p>
+ * <p>四个工作按钮画在底图左侧的四个框上，图标用 {@code work_*.png}；
+ * 底部进度条显示当前工作进度。</p>
  */
 public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceCollectorMenu> {
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath("moonproject", "textures/gui/resonance_gui_tall.png");
-    /** 底图原始尺寸。 */
-    private static final int TEX_W = 256;
-    private static final int TEX_H = 256;
+
+    /** 四个工作按钮的图标。 */
+    private static final ResourceLocation[] ICONS = {
+            ResourceLocation.fromNamespaceAndPath("moonproject", "textures/gui/work_oppress.png"),
+            ResourceLocation.fromNamespaceAndPath("moonproject", "textures/gui/work_commune.png"),
+            ResourceLocation.fromNamespaceAndPath("moonproject", "textures/gui/work_insight.png"),
+            ResourceLocation.fromNamespaceAndPath("moonproject", "textures/gui/work_instinct.png"),
+    };
+
+    /** 四个按钮在界面里的位置（相对 leftPos/topPos，和底图的四个框对齐）。 */
+    private static final int BTN_X = 29;
+    private static final int BTN_W = 14;
+    private static final int BTN_H = 14;
+    private static final int[] BTN_Y = {32, 50, 63, 71};
 
     public ResonanceCollectorScreen(ResonanceCollectorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -28,26 +39,64 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
         this.inventoryLabelY = 144;
     }
 
-    /** 左侧四个工作按钮（压迫 / 沟通 / 洞察 / 本能）。 */
     @Override
-    protected void init() {
-        super.init();
-        String[] names = {"压迫", "沟通", "洞察", "本能"};
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        // 四个按钮图标
         for (int i = 0; i < 4; i++) {
-            final int id = i;
-            int bx = leftPos - 34;
-            int by = topPos + 12 + i * 22;
-            this.addRenderableWidget(new net.minecraft.client.gui.components.Button.Builder(
-                    Component.literal(names[i]),
-                    b -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, id))
-                    .pos(bx, by).size(30, 18).build());
+            int x = leftPos + BTN_X;
+            int y = topPos + BTN_Y[i];
+            // 悬停高亮
+            boolean hover = mouseX >= x && mouseX < x + BTN_W && mouseY >= y && mouseY < y + BTN_H;
+            if (hover) {
+                graphics.fill(x, y, x + BTN_W, y + BTN_H, 0x40FFFFFF);
+            }
+            graphics.blit(ICONS[i], x, y, 0, 0, BTN_W, BTN_H, BTN_W, BTN_H);
+        }
+        // 工作进度：底图下方那条做成进度条 + 百分比文字
+        if (this.menu.getBlockEntity() instanceof com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity be) {
+            int total = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_TOTAL;
+            int done = Math.min(be.getWorkProgress(), total);
+            int barX = leftPos + 36;
+            int barY = topPos + 118;
+            int barW = 100;
+            int barH = 5;
+            // 槽底
+            graphics.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, 0xFF0A0E12);
+            graphics.fill(barX, barY, barX + barW, barY + barH, 0xFF1B2530);
+            if (done > 0) {
+                int w = (int) ((long) barW * done / total);
+                // 亮青渐变（分两段模拟）
+                graphics.fill(barX, barY, barX + w, barY + barH, 0xFF33D6E0);
+                graphics.fill(barX, barY, barX + w, barY + 2, 0xFF7FF0F8);
+            }
+            // 文字：百分比 + 剩余秒数
+            if (be.isWorking()) {
+                int pct = (int) ((long) done * 100 / total);
+                int secLeft = (total - done) / 20;
+                String txt = pct + "%  " + secLeft + "s";
+                graphics.drawString(this.font, txt, leftPos + 60, topPos + 108, 0xFF7FF0F8, false);
+                String name = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_NAMES[be.getWorkType()];
+                graphics.drawString(this.font, name, leftPos + 30, topPos + 108, 0xFFFFFFFF, false);
+            } else {
+                graphics.drawString(this.font, "待机", leftPos + 60, topPos + 108, 0xFF8899A6, false);
+            }
         }
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        // 从 256x256 画布中取 y=42 起、高 171 的有效区域（9 参数版本，显式纹理尺寸）
-        graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        for (int i = 0; i < 4; i++) {
+            int x = leftPos + BTN_X;
+            int y = topPos + BTN_Y[i];
+            if (mouseX >= x && mouseX < x + BTN_W && mouseY >= y && mouseY < y + BTN_H) {
+                if (this.minecraft != null && this.minecraft.gameMode != null) {
+                    this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, i);
+                }
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
