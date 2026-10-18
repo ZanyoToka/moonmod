@@ -27,8 +27,35 @@ public class ResonanceCollectorBlock extends BaseEntityBlock {
     }
 
     @Override
+    public net.minecraft.world.InteractionResult use(net.minecraft.world.level.block.state.BlockState state,
+                                                     net.minecraft.world.level.Level level, BlockPos pos,
+                                                     net.minecraft.world.entity.player.Player player,
+                                                     net.minecraft.world.InteractionHand hand,
+                                                     net.minecraft.world.phys.BlockHitResult hit) {
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof ResonanceCollectorBlockEntity collector) {
+                net.minecraftforge.network.NetworkHooks.openScreen(
+                        (net.minecraft.server.level.ServerPlayer) player, collector, pos);
+            }
+        }
+        return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ResonanceCollectorBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
+            net.minecraft.world.level.Level level, BlockState state,
+            net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return (lvl, pos, st, be) -> {
+            if (be instanceof ResonanceCollectorBlockEntity collector) {
+                ResonanceCollectorBlockEntity.serverTick(lvl, pos, st, collector);
+            }
+        };
     }
 
     @Override

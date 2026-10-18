@@ -2,6 +2,7 @@ package com.moonproject.moonmod.client;
 
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.client.gui.ExpBurnerScreen;
+import com.moonproject.moonmod.client.gui.ResonanceCollectorScreen;
 import com.moonproject.moonmod.init.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,6 +17,7 @@ public class ClientModEvents {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenus.EXP_BURNER_MENU.get(), ExpBurnerScreen::new);
+        MenuScreens.register(ModMenus.RESONANCE_COLLECTOR_MENU.get(), ResonanceCollectorScreen::new);
         });
     }
 }

@@ -5,7 +5,9 @@ import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.effect.ModEffects;
 import com.moonproject.moonmod.init.ModBlockEntities;
 import com.moonproject.moonmod.init.ModBlocks;
+import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
+import com.moonproject.moonmod.init.ModSounds;
 import com.moonproject.moonmod.item.ModCreativeTab;
 import com.moonproject.moonmod.item.ModItems;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -41,6 +43,10 @@ public class MoonProjectMod {
         ModCreativeTab.TABS.register(modEventBus);
         // 6. 注册状态效果（焦黑斩痕等）
         ModEffects.EFFECTS.register(modEventBus);
+        // 7. 注册实体（异想体/Boss/NPC/弹幕骨架，见 init/ModEntities）
+        ModEntities.ENTITIES.register(modEventBus);
+        // 8. 注册音效（武器/异想体/机器音效骨架，见 init/ModSounds）
+        ModSounds.SOUNDS.register(modEventBus);
 
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);
