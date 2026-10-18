@@ -62,7 +62,7 @@ description: 《月亮计划三部曲》MC 同人模组（Minecraft 1.20.1 + For
 |---|---|
 | **Gradle JVM / 工具链** | **`C:\jdk-17`** —— Temurin 17.0.20.1，由 `…\default-workspace\tools\jdk-17.0.20.1+1` 复制出来的副本 |
 | IDEA | Community 2026.2.3；`设置 → 构建、执行、部署 → 构建工具 → Gradle → Gradle JVM` 必须选 `C:\jdk-17` |
-| Gradle | wrapper 8.8，`distributionUrl` 指向腾讯镜像；缓存用默认的 `%USERPROFILE%\.gradle` |
+| Gradle | wrapper 8.8，`distributionUrl` 指向腾讯镜像；缓存用默认的 `C:\Users\23586\.gradle` |
 | 依赖源 | maven.minecraftforge.net ≈ 500 KB/s；阿里云镜像已加在 build.gradle / settings.gradle |
 | ⚠ 系统 PATH 的 java | Oracle JDK 21/22 —— **不能用于本工程** |
 | ⚠ 工作区内的 JDK | `…\default-workspace\tools\jdk-17.0.20.1+1` —— **不要拿来跑 Gradle**（会被沙箱化） |
@@ -521,3 +521,106 @@ property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/ou
 1. 普攻连段（auto1~3）先按这个 GIF 的关键帧节奏还原：拔刀 → 斜斩 → 回旋
 2. 天杀 / 将我抹去 的大招要有明显的"蓄势 → 爆发"两段
 3. 收刀动作单独做一个（鞘击形态）
+---
+
+## 附：人格卡系统（用户 2026-10-17 提出，后期实现）
+
+**需求**：后期只有 **LCB 良秀** 或 **无我良秀** 的「人格卡」才能使用阿赖耶识。
+
+### 设计草稿
+| 概念 | 说明 |
+|---|---|
+| **人格卡（Identity）** | 一张可装备的"身份"，决定你扮演哪个角色，拥有对应的属性/技能/被动 |
+| **持有判定** | 玩家 NBT 或 Capability 里记录当前人格 id，例如 `MoonIdentity = "lcb_ryoshu"` / `"muga_ryoshu"` |
+| **武器限制** | `AlayaVijnanaItem.canUse()` / `onLeftClick` 里校验人格 id；不匹配时：无法拔刀、挥击变成普通攻击或直接提示"你无法握住它" |
+| **与现有系统联动** | 人格决定：阿鼻叫唤是否生效、固定恐慌、可使用哪些技能、面板加成 |
+| **获得方式** | 后期做「人格卡」物品，右键装备；或做成抽卡/剧情获得 |
+
+### 待办（实现时需要）
+1. `MoonIdentity` 数据（NBT 或 Capability）
+2. 阿赖耶识的持有判定：`isDrawnBlade` 之前先校验人格
+3. 人格卡物品 + 装备/切换 UI
+4. 两套人格的差异（LCB 良秀 vs 无我良秀 的属性/技能/被动）
+5. 提示语言（"这并非你的刀刃"之类）
+---
+
+## 附：阿赖耶识 3D 模型的正确拼装方式（用户 2026-10-17 明确）
+
+### 两个状态的构成（重要）
+| 状态 | 由哪些部件组成 |
+|---|---|
+| **刀鞘状态（常态）** | **刀鞘 + 护手 + 刀柄**（即：刀鞘本体 + 拔刀态的刀刃以下部分），两者**无缝拼接**，不能有缝隙 |
+| **拔刀态** | **刀刃 + 护手 + 刀柄**（无刀鞘） |
+
+### 其他要求
+- 贴图可以**镜像**后贴到背面（刀鞘两面都是白底 + 紫色字体 ✓）
+- 鞘上的三道环 = **金色**
+- 刀刃 = **银白色金属**
+- 原图还原"不必过于严格"，**不需要重做模型**，在现有基础上改
+
+### 技术结论（已实测）
+- **`forge:obj` 在 1.20.1 不支持物品模型** ❌（只支持方块模型）→ 物品用 OBJ 会渲染成紫黑/灰管
+- **正确路线：Blockbench 方块模型**（`models/item/*.json`，`parent: item/handheld` 或纯 elements）
+- 物品栏图标必须保持**原版 2D**（已恢复 ✓）
+- OBJ 文件保留在 `models/obj/`，另存模型定义为 `alaya_vijnana_obj_sheathed.json`（未启用）
+
+### 已备好的素材
+- 三段贴图：`alaya_tex_sheath.png`（白鞘+红字）/ `alaya_tex_tsuba.png`（金护手）/ `alaya_tex_hilt.png`（红白柄卷）
+- 刀身贴图：`alaya_vijnana_drawn.png`
+- 参考侧视图：`alaya_sword_tex.png`
+---
+
+## 附：阿赖耶识 3D 物品 display 最终参数（用户 2026-10-18 确认"位置完美"）
+
+```json
+"display": {
+  "thirdperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, 0, 12], "scale": [0.75, 0.75, 0.75] },
+  "firstperson_righthand": { "rotation": [90, -90, 45], "translation": [-6, -3, 11], "scale": [0.72, 0.72, 0.72] },
+  "gui": { "rotation": [-90, 0, 45], "translation": [0, 6, 0], "scale": [1.0, 1.0, 1.0] }
+}
+```
+
+**轴的实际含义（踩坑记录）**：MC 的 display 是**先平移、后旋转**，所以 `translation` 用的是**模型自己的轴**。
+在 `rotation [90, -90, 45]` 下：
+- `translation[0]`(X) → 世界**左右**
+- `translation[1]`(Y) → 世界**前后**
+- `translation[2]`(Z) → 世界**上下**
+
+**rotation[2]（第三个数）= 倾斜角**（45 = 刀尖向上 45°）。
+
+## 3D 渲染方案（最终可用）
+- 自定义 `moonproject:obj_item` 几何加载器（`client/obj/ObjItemModel.java`）自行解析 OBJ+MTL → BakedQuad
+- 注册：`client/ObjModelRegistration.java` 使用 **`ModelEvent.RegisterGeometryLoaders.register("obj_item", loader)`**（String 参数，不含 modid）
+- 贴图必须是 **2 的幂**且**不透明**（透明像素会导致部件"消失"）
+- UV 用 Blender 的 **Smart UV Project** 重展后才会有细节
+- 物品栏图标与手持共用同一模型（2D/3D 分离需要 BEWLR，尝试失败，未采用）
+---
+
+## 附：状态效果与资源系统（2026-10-18 设计记录）
+
+### 呼吸法（Poise）
+- 每层：**+0.5% 暴击率**、**+5% 暴击伤害**
+- 上限 **30 层** → 满层 +15% 暴击率、+150% 暴伤（暴击 ×2.5）
+- 实现：`event/PoiseCritEvents.java`（`LivingHurtEvent` 里掷暴击，暴击粒子 CRIT + ENCHANTED_HIT）
+- API：`PoiseCritEvents.addPoise(entity, n)` / `poiseStacks(entity)`
+- **注意**：呼吸法**不是所有武器命中都获得**，将来与**人格卡（身份卡）**绑定
+  - 计划：只有「LCB 良秀」/「无我良秀」等人格才能积累与消耗
+  - 在人格卡系统完成前，暂不接获取途径（避免误触发）
+
+### 震颤（Tremor）
+- 叠满 **10 层** → 原地引发**不破坏方块**的爆炸（`ExplosionInteraction.NONE`）
+- 爆炸伤害 = **武器白值**（`Attributes.ATTACK_DAMAGE`）
+- 触发后清空层数
+- 实现：`event/TremorEvents.java`（`addTremor(target, stacks, attacker)`）
+- 半径 3 格，爆炸位置在目标身体中部，补一次魔法伤害保证数值准确
+
+### 其余层数型效果
+`bleed`流血 / `rupture`破裂 / `laceration`裂伤 / `cutoff`切丝（100 层爆发）/ `cutbond`无我 / `charge`充能（20 层，每回合 -1）
+均为 `StackEffect`（层数 = amplifier + 1），由 `CombatEvents` 在命中时读取消耗。
+
+### 周期伤害型
+`burn`烧伤 → `PeriodicDamageEffect`（每 N tick 结算，伤害 = 每层伤害 × 层数，魔法伤害）
+
+### 沉沦（Sinking）
+`SinkingEffect`：amplifier + 1 = 强度，层数存实体 NBT `MoonSinkingLayers`；
+有理智目标扣理智，无理智目标吃忧郁魔法伤害。

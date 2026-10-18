@@ -65,23 +65,32 @@ public final class StatusHudOverlay {
         if (!(entity instanceof LivingEntity living) || living == minecraft.player) {
             return;
         }
+        // 缩小显示：整体缩放 0.7
+        final float scale = 0.7F;
         int x = graphics.guiWidth() / 2 + 14;
         int y = graphics.guiHeight() / 2 - 24;
         int line = 0;
+        graphics.pose().pushPose();
+        graphics.pose().scale(scale, scale, 1.0F);
         for (MobEffectInstance instance : living.getActiveEffects()) {
             MobEffect effect = instance.getEffect();
             if (!isTargetEffect(effect)) {
                 continue;
             }
             String label = effect.getDisplayName().getString()
-                    + " x" + (instance.getAmplifier() + 1)
-                    + "  " + Math.max(0, instance.getDuration() / 20) + "s";
-            graphics.drawString(minecraft.font, label, x, y + line * 10, colorFor(effect), true);
+                    + " x" + (instance.getAmplifier() + 1);
+            graphics.drawString(minecraft.font,
+                    label,
+                    (int) (x / scale),
+                    (int) ((y + line * 7) / scale),
+                    colorFor(effect), true);
             line++;
         }
         if (line > 0) {
-            graphics.drawString(minecraft.font, living.getName().getString(), x, y - 12, 0xFFFFFF, true);
+            graphics.drawString(minecraft.font, living.getName().getString(),
+                    (int) (x / scale), (int) ((y - 9) / scale), 0xFFFFFF, true);
         }
+        graphics.pose().popPose();
     }
 
     private static int stacks(LivingEntity entity, MobEffect effect) {
