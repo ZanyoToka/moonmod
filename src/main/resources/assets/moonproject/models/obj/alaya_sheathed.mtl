@@ -1,5 +1,15 @@
-# Blender 4.5.13 LTS Release Candidate MTL File: '未命名_28252_autosave.blend'
+# Blender 4.5.13 LTS Release Candidate MTL File: '11111.blend'
 # www.blender.org
+
+newmtl BladeSteel
+Ns 640.000000
+Ka 0.600000 0.600000 0.600000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/Users/23586/Documents/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/sheath_new.png
 
 newmtl GoldFit
 Ns 577.599976
@@ -9,7 +19,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 3
-map_Kd C:/Users/23586/AppData/Local/Temp/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/alaya_uv_canvas.png
+map_Kd C:/Users/23586/Documents/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/sheath_new.png
 
 newmtl HiltMat
 Ns 422.499969
@@ -19,7 +29,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 3
-map_Kd C:/Users/23586/AppData/Local/Temp/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/alaya_tex_hilt.png
+map_Kd C:/Users/23586/Documents/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/sheath_new.png
 
 newmtl SheathMat
 Ns 422.499969
@@ -29,14 +39,14 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 3
-map_Kd C:/Users/23586/AppData/Local/Temp/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/alaya_tex_sheath.png
+map_Kd C:/Users/23586/Documents/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/uv_canvas_new.png
 
 newmtl TsubaGold
 Ns 577.599976
 Ka 1.000000 1.000000 1.000000
-Kd 0.840000 0.700000 0.320000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 3
+map_Kd C:/Users/23586/Documents/deepseek-harness/default-workspace/moonmod/src/main/resources/assets/moonproject/textures/item/sheath_new.png
