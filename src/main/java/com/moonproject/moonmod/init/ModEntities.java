@@ -1,29 +1,37 @@
 package com.moonproject.moonmod.init;
 
 import com.moonproject.moonmod.MoonProjectMod;
+import com.moonproject.moonmod.entity.ScorchedGirlEntity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
- * 实体注册表（规划第 4 章：异想体 / Boss / NPC / 弹幕）。
- * 当前为空骨架，新增实体时按下述示例注册：
+ * 实体注册表。
  *
- * <pre>
- * public static final RegistryObject&lt;EntityType&lt;NothingThereEntity&gt;&gt; NOTHING_THERE =
- *     ENTITIES.register("nothing_there",
- *         () -&gt; EntityType.Builder.of(NothingThereEntity::new, MobCategory.MONSTER)
- *             .sized(1.2F, 2.7F)
- *             .build("nothing_there"));
- * </pre>
- *
- * 配套工作（每个实体 4 件套）：
- * 1. entity/ 包下的实体类（继承 {@link com.moonproject.moonmod.entity.AbnormalityEntity}）；
- * 2. GeckoLib 骨骼模型与动画（assets/moonproject/animmodels/）；
- * 3. data/moonproject/ 生成数据（鸡蛋 / 自然生成 / 掉落表）；
- * 4. lang/zh_cn.json 与 en_us.json 增加名字。
+ * <p>新增实体时按下面 {@link #SCORCHED_GIRL} 的写法注册，并配套：</p>
+ * <ol>
+ *   <li>entity/ 包下的实体类；</li>
+ *   <li>client/renderer 包下的渲染器 + 在 ClientModEvents 里注册；</li>
+ *   <li>lang 里加名字；</li>
+ *   <li>需要的话加刷怪蛋 / 掉落表。</li>
+ * </ol>
  */
 public class ModEntities {
+
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MoonProjectMod.MODID);
+
+    /** 焦化少女（TETH）：靠近玩家自爆。 */
+    public static final RegistryObject<EntityType<ScorchedGirlEntity>> SCORCHED_GIRL =
+            ENTITIES.register("scorched_girl", () -> EntityType.Builder
+                    .of(ScorchedGirlEntity::new, MobCategory.MONSTER)
+                    .sized(0.55F, 1.0F)
+                    .clientTrackingRange(8)
+                    .build("scorched_girl"));
+
+    private ModEntities() {
+    }
 }
