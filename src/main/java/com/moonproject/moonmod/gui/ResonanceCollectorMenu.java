@@ -25,6 +25,19 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
 
     private final BlockEntity blockEntity;
 
+    /** 客户端同步过来的工作方式（0-3，-1=待机）。 */
+    private int syncedType = -1;
+    /** 客户端同步过来的工作进度（tick）。 */
+    private int syncedProgress = 0;
+
+    public int getWorkType() {
+        return syncedType;
+    }
+
+    public int getWorkProgress() {
+        return syncedProgress;
+    }
+
     /** 客户端/服务端通用构造：从网络包读方块坐标。 */
     public ResonanceCollectorMenu(int id, Inventory playerInv, FriendlyByteBuf buf) {
         this(id, playerInv, playerInv.player.level().getBlockEntity(buf.readBlockPos()));
@@ -35,6 +48,30 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
         this.blockEntity = be;
         SimpleContainer container = be instanceof ResonanceCollectorBlockEntity collector
                 ? collector.getItems() : new SimpleContainer(BLOCK_SLOTS);
+
+        // 同步工作状态到客户端（workType / workProgress）
+        if (be instanceof ResonanceCollectorBlockEntity collector) {
+            this.addDataSlots(new net.minecraft.world.inventory.ContainerData() {
+                @Override
+                public int get(int index) {
+                    return index == 0 ? collector.getWorkType() : collector.getWorkProgress();
+                }
+
+                @Override
+                public void set(int index, int value) {
+                    if (index == 0) {
+                        syncedType = value;
+                    } else {
+                        syncedProgress = value;
+                    }
+                }
+
+                @Override
+                public int getCount() {
+                    return 2;
+                }
+            });
+        }
 
         // 方块槽位（坐标按 GUI 底图估计，Screen 里可再微调）
         this.addSlot(new Slot(container, 0, 78, 59) {

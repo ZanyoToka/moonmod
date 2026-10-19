@@ -30,7 +30,7 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
     private static final int BTN_X = 29;
     private static final int BTN_W = 14;
     private static final int BTN_H = 14;
-    private static final int[] BTN_Y = {32, 50, 63, 71};
+    private static final int[] BTN_Y = {32, 50, 67, 80};
 
     public ResonanceCollectorScreen(ResonanceCollectorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -54,9 +54,12 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
             graphics.blit(ICONS[i], x, y, 0, 0, BTN_W, BTN_H, BTN_W, BTN_H);
         }
         // 工作进度：底图下方那条做成进度条 + 百分比文字
-        if (this.menu.getBlockEntity() instanceof com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity be) {
+        {
+            // 通过 ContainerData 读服务端同步过来的状态
+            int syncedType = this.menu.getWorkType();
+            int syncedProgress = this.menu.getWorkProgress();
             int total = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_TOTAL;
-            int done = Math.min(be.getWorkProgress(), total);
+            int done = Math.min(syncedProgress, total);
             int barX = leftPos + 36;
             int barY = topPos + 118;
             int barW = 100;
@@ -71,12 +74,12 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
                 graphics.fill(barX, barY, barX + w, barY + 2, 0xFF7FF0F8);
             }
             // 文字：百分比 + 剩余秒数
-            if (be.isWorking()) {
+            if (syncedType >= 0) {
                 int pct = (int) ((long) done * 100 / total);
                 int secLeft = (total - done) / 20;
                 String txt = pct + "%  " + secLeft + "s";
                 graphics.drawString(this.font, txt, leftPos + 60, topPos + 108, 0xFF7FF0F8, false);
-                String name = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_NAMES[be.getWorkType()];
+                String name = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_NAMES[Math.max(0, Math.min(3, syncedType))];
                 graphics.drawString(this.font, name, leftPos + 30, topPos + 108, 0xFFFFFFFF, false);
             } else {
                 graphics.drawString(this.font, "待机", leftPos + 60, topPos + 108, 0xFF8899A6, false);
