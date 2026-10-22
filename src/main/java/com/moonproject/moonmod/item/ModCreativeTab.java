@@ -27,6 +27,8 @@ public class ModCreativeTab {
                         output.accept(ModItems.ABNORMALITY_FRAGMENT.get());
                         output.accept(ModItems.EGO_CORE.get());
                 output.accept(ModItems.ABNORMALITY_CORE.get());
+                output.accept(ModItems.FINAL_MATCH.get());
+                output.accept(ModItems.FINAL_MATCH_LIGHT.get());
                 output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.REGRET.get());
                         output.accept(ModItems.ALAYA_VIJNANA.get());

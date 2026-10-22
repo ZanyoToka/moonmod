@@ -26,13 +26,18 @@ import net.minecraft.world.phys.AABB;
 public class ScorchedGirlEntity extends Monster {
 
     /** 触发引线的距离（格）。 */
-    public static final double TRIGGER_RANGE = 3.0D;
+    public static final double TRIGGER_RANGE = 1.0D;
     /** 引线时长（tick）：3 秒。 */
-    public static final int FUSE_TICKS = 20;
+    public static final int FUSE_TICKS = 1;
     /** 爆炸半径。 */
     public static final float EXPLODE_RADIUS = 200.0F;
     /** 出生后的保护期（tick），期间不会开始引线。 */
-    public static final int SPAWN_GRACE_TICKS = 200;
+    public static final int SPAWN_GRACE_TICKS = 20;
+    /** 生成时要求离玩家至少这么远（格），避免直接刷在玩家身边。 */
+    public static final double MIN_SPAWN_DISTANCE = 24.0D;
+
+    /** 锁定目标时的最大搜索半径（格）：只标记 500 格内的玩家。 */
+    public static final double LOCK_RANGE = 500.0D;
 
     private int fuse = -1;
 
@@ -41,14 +46,14 @@ public class ScorchedGirlEntity extends Monster {
 
     public ScorchedGirlEntity(EntityType<? extends ScorchedGirlEntity> type, Level level) {
         super(type, level);
-        this.xpReward = 8;
+        this.xpReward = 25;   // 与精英怪相同
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0D)
+                .add(Attributes.MAX_HEALTH, 100.0D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.28D)
+                .add(Attributes.MOVEMENT_SPEED, 0.08D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
     }
 
@@ -56,10 +61,25 @@ public class ScorchedGirlEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         // 仇恨机制：出生时随机锁定一名玩家，之后永不改变（见 tick 里的 lockTarget）
+    }
+
+    /**
+     * 判断某个位置是否可以生成焦化少女：周围 {@link #MIN_SPAWN_DISTANCE} 格内不能有玩家。
+     *
+     * <p>自然生成 / 采集单元生成都要先过这一步，避免直接刷到玩家身边。</p>
+     */
+    public static boolean canSpawnAt(Level level, net.minecraft.core.BlockPos pos) {
+        double minSq = MIN_SPAWN_DISTANCE * MIN_SPAWN_DISTANCE;
+        for (Player p : level.players()) {
+            if (p.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < minSq) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -73,7 +93,8 @@ public class ScorchedGirlEntity extends Monster {
             return;
         }
         if (lockedTarget == null) {
-            java.util.List<net.minecraft.server.level.ServerPlayer> players = server.getPlayers(p -> !p.isSpectator());
+            java.util.List<net.minecraft.server.level.ServerPlayer> players = server.getPlayers(p ->
+                !p.isSpectator() && p.distanceToSqr(this) <= LOCK_RANGE * LOCK_RANGE);
             if (players.isEmpty()) {
                 return;
             }

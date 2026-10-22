@@ -56,8 +56,8 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
         // 工作进度：底图下方那条做成进度条 + 百分比文字
         {
             // 通过 ContainerData 读服务端同步过来的状态
-            int syncedType = this.menu.getWorkType();
-            int syncedProgress = this.menu.getWorkProgress();
+            int syncedType = ((ResonanceCollectorMenu) this.menu).getWorkType();
+            int syncedProgress = ((ResonanceCollectorMenu) this.menu).getWorkProgress();
             int total = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_TOTAL;
             int done = Math.min(syncedProgress, total);
             int barX = leftPos + 36;
@@ -77,6 +77,15 @@ public class ResonanceCollectorScreen extends AbstractContainerScreen<ResonanceC
             if (syncedType >= 0) {
                 int pct = (int) ((long) done * 100 / total);
                 int secLeft = (total - done) / 20;
+                boolean escapeSoon = ((ResonanceCollectorMenu) this.menu).willEscape() && secLeft <= 5;
+                if (escapeSoon) {
+                    // 进度条变红闪烁 + 警告文字
+                    float t2 = (float) (Math.sin(System.currentTimeMillis() / 120.0) * 0.5 + 0.5);
+                    int red = 0xFF0000 | ((int) (120 + 135 * t2) << 24);
+                    graphics.fill(barX, barY, barX + barW, barY + barH, red);
+                    graphics.drawString(this.font, "§4§l警告：异想体即将出逃！",
+                            leftPos + 40, topPos + 98, 0xFFFF5555, true);
+                }
                 String txt = pct + "%  " + secLeft + "s";
                 graphics.drawString(this.font, txt, leftPos + 60, topPos + 108, 0xFF7FF0F8, false);
                 String name = com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity.WORK_NAMES[Math.max(0, Math.min(3, syncedType))];

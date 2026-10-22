@@ -69,6 +69,14 @@ public class ModItems {
     public static final RegistryObject<Item> ABNORMALITY_CORE = ITEMS.register("abnormality_core",
             () -> new Item(new Item.Properties()));
 
+    /** 终末火柴：焦化少女的异想体核心（工作方块中央槽用）。 */
+    public static final RegistryObject<Item> FINAL_MATCH = ITEMS.register("final_match",
+            () -> new AbnormalityCoreItem("scorched_girl", new Item.Properties()));
+
+    /** 终末火柴之光：焦化少女核心对应的异想体饰品（头饰）。 */
+    public static final RegistryObject<Item> FINAL_MATCH_LIGHT = ITEMS.register("final_match_light",
+            () -> new AbnormalityTrinketItem("scorched_girl", "head", new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
             () -> new Item(new Item.Properties()));
 

@@ -39,6 +39,8 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
 
     private int workType = -1;
     private int workProgress = 0;
+    /** 本次工作是否会引发异想体出逃（开始时掷一次，用于进度条预警）。 */
+    private boolean willEscape = false;
 
     public ResonanceCollectorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.RESONANCE_COLLECTOR.get(), pos, state);
@@ -70,6 +72,8 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
         }
         this.workType = type;
         this.workProgress = 0;
+        // 开始时掷一次：这次工作会不会导致异想体出逃（1%）
+        this.willEscape = level.getRandom().nextFloat() < ABNORMALITY_CHANCE;
         setChanged();
         return true;
     }
@@ -87,6 +91,24 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
             finishWork(level, type);
             setChanged();
         }
+    }
+
+    /** 直接在采集单元上方生成焦化少女（就刷在玩家面前）。 */
+    private void spawnAbnormality(net.minecraft.server.level.ServerLevel server) {
+        com.moonproject.moonmod.entity.ScorchedGirlEntity mob =
+                com.moonproject.moonmod.init.ModEntities.SCORCHED_GIRL.get().create(server);
+        if (mob == null) {
+            return;
+        }
+        double x = worldPosition.getX() + 0.5D;
+        double y = worldPosition.getY() + 1.0D;
+        double z = worldPosition.getZ() + 0.5D;
+        mob.moveTo(x, y, z, server.getRandom().nextFloat() * 360.0F, 0.0F);
+        server.addFreshEntity(mob);
+    }
+    /** 本次工作是否会引发异想体出逃（进度条预警用）。 */
+    public boolean willEscape() {
+        return willEscape;
     }
 
     /** 每次工作产出饰品的基础概率。 */
@@ -137,8 +159,9 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
             }
         }
 
-        // ③ 1% 生成异想体（实体未实现前先用粒子+广播提示）
-        if (level.getRandom().nextFloat() < ABNORMALITY_CHANCE) {
+        // ③ 异想体出逃：开始时已掷定，这里真正召唤
+        if (willEscape) {
+            willEscape = false;
             if (level instanceof net.minecraft.server.level.ServerLevel server) {
                 server.sendParticles(net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME,
                         worldPosition.getX() + 0.5, worldPosition.getY() + 1.2, worldPosition.getZ() + 0.5,
@@ -146,8 +169,10 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
                 for (net.minecraft.world.entity.player.Player p : server.getPlayers(p ->
                         p.distanceToSqr(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ()) < 400)) {
                     p.displayClientMessage(net.minecraft.network.chat.Component.literal(
-                            "§5异常反应：异想体正在显现……"), true);
+                            "§4§l警告：有异想体出逃了！"), true);
                 }
+                // 在离玩家至少 24 格的地方生成焦化少女
+                spawnAbnormality(server);
             }
         }
     }
@@ -169,6 +194,7 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
         }
         tag.putInt("WorkType", workType);
         tag.putInt("WorkProgress", workProgress);
+        tag.putBoolean("WillEscape", willEscape);
     }
 
     @Override
@@ -180,6 +206,7 @@ public class ResonanceCollectorBlockEntity extends BlockEntity implements MenuPr
         }
         workType = tag.getInt("WorkType");
         workProgress = tag.getInt("WorkProgress");
+        willEscape = tag.getBoolean("WillEscape");
     }
 
     @Override

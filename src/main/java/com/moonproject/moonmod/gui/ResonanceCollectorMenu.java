@@ -29,6 +29,8 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
     private int syncedType = -1;
     /** 客户端同步过来的工作进度（tick）。 */
     private int syncedProgress = 0;
+    /** 客户端同步过来的「本次会出逃」标记。 */
+    private boolean syncedEscape = false;
 
     public int getWorkType() {
         return syncedType;
@@ -36,6 +38,11 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
 
     public int getWorkProgress() {
         return syncedProgress;
+    }
+
+    /** 客户端同步过来的「本次会出逃」标记。 */
+    public boolean willEscape() {
+        return syncedEscape;
     }
 
     /** 客户端/服务端通用构造：从网络包读方块坐标。 */
@@ -54,21 +61,29 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
             this.addDataSlots(new net.minecraft.world.inventory.ContainerData() {
                 @Override
                 public int get(int index) {
-                    return index == 0 ? collector.getWorkType() : collector.getWorkProgress();
+                    if (index == 0) {
+                        return collector.getWorkType();
+                    }
+                    if (index == 1) {
+                        return collector.getWorkProgress();
+                    }
+                    return collector.willEscape() ? 1 : 0;
                 }
 
                 @Override
                 public void set(int index, int value) {
                     if (index == 0) {
                         syncedType = value;
-                    } else {
+                    } else if (index == 1) {
                         syncedProgress = value;
+                    } else {
+                        syncedEscape = value != 0;
                     }
                 }
 
                 @Override
                 public int getCount() {
-                    return 2;
+                    return 3;
                 }
             });
         }
@@ -78,7 +93,7 @@ public class ResonanceCollectorMenu extends AbstractContainerMenu {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 // 中央槽只接受「异想体核心」
-                return stack.is(com.moonproject.moonmod.item.ModItems.ABNORMALITY_CORE.get());
+                return stack.getItem() instanceof com.moonproject.moonmod.item.AbnormalityCoreItem;
             }
         });   // 中央：异想体核心
         this.addSlot(new Slot(container, 1, 130, 46));   // 右侧：脑啡肽
