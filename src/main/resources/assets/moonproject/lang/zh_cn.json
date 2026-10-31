@@ -33,11 +33,67 @@
   "effect.moonproject.cutbond": "无我",
   "key.categories.moonproject": "月亮计划",
   "key.moonproject.heavenly_kill": "天杀（技能）",
-  "key.moonproject.erase": "将我抹去，也将你抹去。（技能）"
-,
-  "item.moonproject.enkephalin": "脑啡肽"
-,
-  "block.moonproject.resonance_collector": "场谐振能源采集单元"
-,
-  "item.moonproject.abnormality_core": "异想体核心"
+  "key.moonproject.erase": "将我抹去，也将你抹去。（技能）",
+
+  "block.moonproject.exp_burner": "经验焚书熔炉",
+  "item.moonproject.exp_burner": "经验焚书熔炉",
+  "container.moonproject.exp_burner": "经验焚书熔炉",
+  "tooltip.moonproject.exp_burner": "焚烧书籍、附魔书或常规燃料，将知识提炼转化为纯净经验值与余烬。",
+  "gui.moonproject.exp_burner.stored": "经验储量: %s / %s EXP",
+  "gui.moonproject.exp_burner.rate": "转化速率: +%s EXP/秒",
+  "gui.moonproject.exp_burner.idle": "状态: 待机中",
+  "gui.moonproject.exp_burner.extract_hint": "点击右侧提取按钮提取经验 (或潜行+右键方块)",
+  "gui.moonproject.exp_burner.extract_tooltip": "点击提取熔炉内所有存储的经验值",
+  "gui.moonproject.exp_burner.fuel_title": "【烧书与燃料槽】",
+  "gui.moonproject.exp_burner.fuel_desc1": "可投入各类书籍、附魔书、书与笔",
+  "gui.moonproject.exp_burner.fuel_desc2": "亦可使用原版煤炭、熔岩等常规燃料",
+
+  "block.moonproject.mephistopheles_seat": "梅菲斯特客席",
+  "entity.moonproject.seat": "梅菲斯特客席",
+  "item.moonproject.mephistopheles_seat": "梅菲斯特客席",
+
+  "block.moonproject.containment_unit": "异想体收容单元",
+  "item.moonproject.containment_unit": "异想体收容单元",
+  "container.moonproject.containment_unit": "异想体收容单元",
+  "tooltip.moonproject.containment_unit": "脑叶公司核心收容设施。装载异想体核心，维持逆卡巴拉安定度，归零将导致收容失效狂暴暴走。",
+
+  "block.moonproject.enkephalin_extractor": "脑啡肽提取终端",
+  "item.moonproject.enkephalin_extractor": "脑啡肽提取终端",
+  "container.moonproject.enkephalin_extractor": "脑啡肽提取终端",
+  "tooltip.moonproject.enkephalin_extractor": "消耗催化剂从相邻异想体收容单元中萃取纯净脑啡肽，同时消耗收容室逆卡巴拉计数。",
+
+  "block.moonproject.meltdown_siren": "脑叶警报广播机",
+  "item.moonproject.meltdown_siren": "脑叶警报广播机",
+  "container.moonproject.meltdown_siren": "脑叶警报广播机",
+  "tooltip.moonproject.meltdown_siren": "设施防灾应急广播系统。在逆卡巴拉暴走告急或红石通电时拉响防空警报，强化镇压人员并曝光潜行敌对目标。",
+
+  "block.moonproject.bookbinding_table": "总类层装订台",
+  "item.moonproject.bookbinding_table": "总类层装订台",
+  "container.moonproject.bookbinding_table": "总类层装订台",
+  "container.moonmod.bookbinding_table": "总类层装订台",
+  "tooltip.moonproject.bookbinding_table": "废墟图书馆总类层工作台。整理光芒知识碎片，装订各类书籍与神备书页，翻阅时抚平精神躁动。",
+
+  "block.moonproject.identity_extractor": "人格抽取共鸣舱",
+  "item.moonproject.identity_extractor": "人格抽取共鸣舱",
+  "container.moonproject.identity_extractor": "人格抽取共鸣舱",
+  "tooltip.moonproject.identity_extractor": "边狱公司镜面共鸣设备。投入异想体碎片、E.G.O核心或经验瓶，共鸣镜面世界轴抽取高阶人格与书页。",
+
+  "block.moonproject.mephistopheles_engine": "梅菲斯特引擎核心",
+  "item.moonproject.mephistopheles_engine": "梅菲斯特引擎核心",
+  "container.moonproject.mephistopheles_engine": "梅菲斯特引擎核心",
+  "tooltip.moonproject.mephistopheles_engine": "边狱客运巴士的生物柴油引擎。吞噬腐肉与有机残渣供能，为周围入座客席的罪人提供强效生命与理智共鸣回复。",
+
+  "block.moonproject.kcorp_injector": "K公司再生安瓿灌装机",
+  "item.moonproject.kcorp_injector": "K公司再生安瓿灌装机",
+  "container.moonproject.kcorp_injector": "K公司再生安瓿灌装机",
+  "tooltip.moonproject.kcorp_injector": "都市南翼K公司奇点工业设施。储蓄微纳米眼泪原液，靠近享受纳米水雾自愈，可使用玻璃瓶分装高浓度再生安瓿。",
+
+  "block.moonproject.golden_bough_shrine": "黄金枝基座",
+  "item.moonproject.golden_bough_shrine": "黄金枝基座",
+  "container.moonproject.golden_bough_shrine": "黄金枝基座",
+  "tooltip.moonproject.golden_bough_shrine": "光之种发芽坛至高圣物。插入黄金枝后激发贯穿天际的金光，构筑48格绝对光之领域，免疫恐慌与侵蚀，镇定暴走异想体。",
+
+  "block.moonproject.reinforced_plating": "都市重装防爆壁",
+  "item.moonproject.reinforced_plating": "都市重装防爆壁",
+  "tooltip.moonproject.reinforced_plating": "脑叶公司设施重型防护装甲壁。具有极高硬度与超强抗爆性能，紧密包裹收容室可大幅减缓逆卡巴拉计数衰减。"
 }

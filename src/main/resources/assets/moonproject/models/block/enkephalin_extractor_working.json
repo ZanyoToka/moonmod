@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/enkephalin_extractor_front_working",
+    "down": "moonproject:block/enkephalin_extractor_bottom",
+    "up": "moonproject:block/enkephalin_extractor_top",
+    "north": "moonproject:block/enkephalin_extractor_front_working",
+    "south": "moonproject:block/enkephalin_extractor_side",
+    "west": "moonproject:block/enkephalin_extractor_side",
+    "east": "moonproject:block/enkephalin_extractor_side"
+  }
+}

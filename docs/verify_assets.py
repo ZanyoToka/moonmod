@@ -51,6 +51,8 @@ for key in sorted(used_keys):
 items_src = open(os.path.join(JAVA, "com", "moonproject", "moonmod", "item", "ModItems.java"),
                  encoding="utf-8").read()
 item_ids = re.findall(r'ITEMS\.register\("([^"]+)"', items_src)
+blocks_src = open(os.path.join(JAVA, "com", "moonproject", "moonmod", "init", "ModBlocks.java"), encoding="utf-8").read()
+item_ids += re.findall(r'registerBlock\("([^"]+)"', blocks_src)
 
 for item_id in item_ids:
     model_path = os.path.join(RES, "assets", MODID, "models", "item", item_id + ".json")

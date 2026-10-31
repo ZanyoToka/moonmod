@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,alert=false": {
+      "model": "moonproject:block/containment_unit"
+    },
+    "facing=east,alert=false": {
+      "model": "moonproject:block/containment_unit",
+      "y": 90
+    },
+    "facing=south,alert=false": {
+      "model": "moonproject:block/containment_unit",
+      "y": 180
+    },
+    "facing=west,alert=false": {
+      "model": "moonproject:block/containment_unit",
+      "y": 270
+    },
+    "facing=north,alert=true": {
+      "model": "moonproject:block/containment_unit_alert"
+    },
+    "facing=east,alert=true": {
+      "model": "moonproject:block/containment_unit_alert",
+      "y": 90
+    },
+    "facing=south,alert=true": {
+      "model": "moonproject:block/containment_unit_alert",
+      "y": 180
+    },
+    "facing=west,alert=true": {
+      "model": "moonproject:block/containment_unit_alert",
+      "y": 270
+    }
+  }
+}

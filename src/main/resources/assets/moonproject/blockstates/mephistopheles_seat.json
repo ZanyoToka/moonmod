@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "moonproject:block/mephistopheles_seat"
+    },
+    "facing=east": {
+      "model": "moonproject:block/mephistopheles_seat",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "moonproject:block/mephistopheles_seat",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "moonproject:block/mephistopheles_seat",
+      "y": 270
+    }
+  }
+}

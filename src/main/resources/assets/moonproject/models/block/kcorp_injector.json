@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/kcorp_injector_front",
+    "down": "moonproject:block/kcorp_injector_bottom",
+    "up": "moonproject:block/kcorp_injector_top",
+    "north": "moonproject:block/kcorp_injector_front",
+    "south": "moonproject:block/kcorp_injector_side",
+    "west": "moonproject:block/kcorp_injector_side",
+    "east": "moonproject:block/kcorp_injector_side"
+  }
+}

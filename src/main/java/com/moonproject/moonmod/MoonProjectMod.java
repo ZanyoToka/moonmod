@@ -7,9 +7,9 @@ import com.moonproject.moonmod.init.ModBlockEntities;
 import com.moonproject.moonmod.init.ModBlocks;
 import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
-import com.moonproject.moonmod.init.ModSounds;
 import com.moonproject.moonmod.item.ModCreativeTab;
 import com.moonproject.moonmod.item.ModItems;
+import com.moonproject.moonmod.worldgen.structure.ModStructures;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -31,22 +31,21 @@ public class MoonProjectMod {
 
         // 1. 注册物品
         ModItems.ITEMS.register(modEventBus);
-        // 2. 注册方块及其方块物品（新增）
+        // 2. 注册方块及其方块物品
         ModBlocks.BLOCKS.register(modEventBus);
-        // 如果 ModBlocks 内部通过 ModBlocks.ITEMS 注册了 BlockItem，也一并注册：
         ModBlocks.ITEMS.register(modEventBus);
-        // 3. 注册方块实体 BlockEntity（经验熔炉等，新增）
+        // 3. 注册实体（骑乘座椅等）
+        ModEntities.register(modEventBus);
+        // 4. 注册方块实体 BlockEntity（经验熔炉等）
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
-        // 4. 注册容器菜单 MenuType（GUI 支持，新增）
+        // 5. 注册容器菜单 MenuType（GUI 支持）
         ModMenus.MENUS.register(modEventBus);
-        // 5. 注册创造标签页
+        // 6. 注册创造标签页
         ModCreativeTab.TABS.register(modEventBus);
-        // 6. 注册状态效果（焦黑斩痕等）
+        // 7. 注册状态效果（焦黑斩痕等）
         ModEffects.EFFECTS.register(modEventBus);
-        // 7. 注册实体（异想体/Boss/NPC/弹幕骨架，见 init/ModEntities）
-        ModEntities.ENTITIES.register(modEventBus);
-        // 8. 注册音效（武器/异想体/机器音效骨架，见 init/ModSounds）
-        ModSounds.SOUNDS.register(modEventBus);
+        // 8. 注册自然生成结构（边狱支部·迷途客车与收容站台）
+        ModStructures.register(modEventBus);
 
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);

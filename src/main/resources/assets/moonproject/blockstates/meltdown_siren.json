@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "moonproject:block/meltdown_siren"
+    },
+    "active=true": {
+      "model": "moonproject:block/meltdown_siren_active"
+    }
+  }
+}

@@ -14,20 +14,17 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class ModCreativeTab {
     // 1.20.1 的创造模式标签页注册键是 Registries.CREATIVE_MODE_TAB
-    // （ForgeRegistries.Keys 里没有 CREATIVE_MODE_TABS，写它会编译不过）
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MoonProjectMod.MODID);
 
     public static final RegistryObject<CreativeModeTab> MOON_TAB = TABS.register("moon_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.moonproject"))
-                    .icon(() -> new ItemStack(ModItems.REGRET.get()))
+                    .icon(() -> new ItemStack(ModBlocks.CONTAINMENT_UNIT.get()))
                     .displayItems((parameters, output) -> {
                         // 物品与装备
                         output.accept(ModItems.ABNORMALITY_FRAGMENT.get());
                         output.accept(ModItems.EGO_CORE.get());
-                output.accept(ModItems.ABNORMALITY_CORE.get());
-                output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.REGRET.get());
                         output.accept(ModItems.ALAYA_VIJNANA.get());
                         output.accept(ModItems.EGO_HELMET.get());
@@ -35,9 +32,20 @@ public class ModCreativeTab {
                         output.accept(ModItems.EGO_LEGGINGS.get());
                         output.accept(ModItems.EGO_BOOTS.get());
 
-                        // 方块：经验熔炉
+                        // 方块设施
                         output.accept(ModBlocks.EXP_BURNER.get());
-                output.accept(ModBlocks.RESONANCE_COLLECTOR.get());
+                        output.accept(ModBlocks.MEPHISTOPHELES_SEAT.get());
+                        output.accept(ModBlocks.CONTAINMENT_UNIT.get());
+                        output.accept(ModBlocks.ENKEPHALIN_EXTRACTOR.get());
+                        output.accept(ModBlocks.MELTDOWN_SIREN.get());
+                        output.accept(ModBlocks.REINFORCED_PLATING.get());
+
+                        // 图书馆与边狱工坊设施
+                        output.accept(ModBlocks.BOOKBINDING_TABLE.get());
+                        output.accept(ModBlocks.IDENTITY_EXTRACTOR.get());
+                        output.accept(ModBlocks.MEPHISTOPHELES_ENGINE.get());
+                        output.accept(ModBlocks.KCORP_INJECTOR.get());
+                        output.accept(ModBlocks.GOLDEN_BOUGH_SHRINE.get());
                     })
                     .build());
 }

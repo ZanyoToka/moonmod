@@ -9,13 +9,10 @@
 
   // ② Gradle 守护进程必须用「工作区之外」的 JDK 17：
   //    这台机器的 DSH 工作区带沙箱标签，从工作区目录启动的进程会继承沙箱，
-  //    只能写工作区、写不了 C:\Users\23586\.gradle，于是 Gradle 守护进程会报
+  //    只能写工作区、写不了用户目录下的 .gradle，于是 Gradle 守护进程会报
   //    native-platform.dll.lock 拒绝访问 / Unable to create daemon log file。
   //    C:\jdk-17 是从 tools 目录复制出来的副本（Temurin 17.0.20.1），千万改回 tools 里的那个。
   "java.import.gradle.java.home": "C:\\jdk-17",
-
-  // Gradle 缓存用默认位置（守护进程不再被沙箱化后，写得进去了）
-  "java.import.gradle.user.home": "C:\\Users\\23586\\.gradle",
 
   // ③ 项目编译目标固定 JDK 17（Forge 1.20.1 的硬性要求）
   "java.configuration.runtimes": [

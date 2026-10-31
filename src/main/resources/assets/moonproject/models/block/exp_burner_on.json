@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/exp_burner_front_on",
+    "down": "moonproject:block/exp_burner_bottom",
+    "up": "moonproject:block/exp_burner_top",
+    "north": "moonproject:block/exp_burner_front_on",
+    "south": "moonproject:block/exp_burner_back_on",
+    "west": "moonproject:block/exp_burner_side",
+    "east": "moonproject:block/exp_burner_side_alt"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "moonproject:block/bookbinding_table"
+    },
+    "facing=east": {
+      "model": "moonproject:block/bookbinding_table",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "moonproject:block/bookbinding_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "moonproject:block/bookbinding_table",
+      "y": 270
+    }
+  }
+}

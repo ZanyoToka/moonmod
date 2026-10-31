@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "moonproject:limbus_branch",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 10,
+    "salt": 19840312
+  }
+}

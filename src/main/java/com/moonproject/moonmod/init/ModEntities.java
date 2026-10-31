@@ -1,37 +1,32 @@
 package com.moonproject.moonmod.init;
 
 import com.moonproject.moonmod.MoonProjectMod;
-import com.moonproject.moonmod.entity.ScorchedGirlEntity;
+import com.moonproject.moonmod.entity.SeatEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * 实体注册表。
- *
- * <p>新增实体时按下面 {@link #SCORCHED_GIRL} 的写法注册，并配套：</p>
- * <ol>
- *   <li>entity/ 包下的实体类；</li>
- *   <li>client/renderer 包下的渲染器 + 在 ClientModEvents 里注册；</li>
- *   <li>lang 里加名字；</li>
- *   <li>需要的话加刷怪蛋 / 掉落表。</li>
- * </ol>
+ * 模组实体类型注册器。
  */
 public class ModEntities {
-
-    public static final DeferredRegister<EntityType<?>> ENTITIES =
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MoonProjectMod.MODID);
 
-    /** 焦化少女（TETH）：靠近玩家自爆。 */
-    public static final RegistryObject<EntityType<ScorchedGirlEntity>> SCORCHED_GIRL =
-            ENTITIES.register("scorched_girl", () -> EntityType.Builder
-                    .of(ScorchedGirlEntity::new, MobCategory.MONSTER)
-                    .sized(0.55F, 1.0F)
-                    .clientTrackingRange(8)
-                    .build("scorched_girl"));
+    public static final RegistryObject<EntityType<SeatEntity>> SEAT =
+            ENTITY_TYPES.register("seat", () ->
+                    EntityType.Builder.<SeatEntity>of(SeatEntity::new, MobCategory.MISC)
+                            .sized(0.001F, 0.001F)
+                            .noSummon()
+                            .clientTrackingRange(4)
+                            .updateInterval(20)
+                            .build("seat")
+            );
 
-    private ModEntities() {
+    public static void register(IEventBus eventBus) {
+        ENTITY_TYPES.register(eventBus);
     }
 }

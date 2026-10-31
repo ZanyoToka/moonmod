@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/bookbinding_table_top",
+    "down": "moonproject:block/bookbinding_table_bottom",
+    "up": "moonproject:block/bookbinding_table_top",
+    "north": "moonproject:block/bookbinding_table_front",
+    "south": "moonproject:block/bookbinding_table_side",
+    "west": "moonproject:block/bookbinding_table_side",
+    "east": "moonproject:block/bookbinding_table_side"
+  }
+}

@@ -8,11 +8,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
+/**
+ * 蓝色烧书熔炉菜单容器：
+ * 连接服务端方块实体与客户端屏幕，同步槽位与燃烧数据。
+ */
 public class ExpBurnerMenu extends AbstractContainerMenu {
     private final ExpBurnerBlockEntity blockEntity;
     private final ContainerData data;
@@ -20,7 +23,7 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
 
     // 客户端调用的构造器
     public ExpBurnerMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(containerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(3));
+        this(containerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
     }
 
     // 服务端调用的构造器
@@ -30,15 +33,15 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
         this.data = data;
         this.levelAccess = ContainerLevelAccess.create(entity.getLevel(), entity.getBlockPos());
 
-        // 绑定容器数据同步（0: litTime, 1: maxLitTime, 2: storedExp）
+        // 绑定容器数据同步（0: litTime, 1: maxLitTime, 2: storedExp, 3: expRate）
         addDataSlots(data);
 
-        // 1. 添加机器的燃料槽位 (位于 GUI 坐标 x=80, y=36)
-        this.blockEntity.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-            addSlot(new SlotItemHandler(handler, 0, 56, 53) {
+        // 1. 添加机器的燃料/书本槽位 (位于 GUI 坐标 x=56, y=53)
+        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
+            addSlot(new SlotItemHandler(handler, 0, 36, 35) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
+                    return ExpBurnerBlockEntity.getFuelBurnDuration(stack) > 0;
                 }
             });
         });
@@ -56,7 +59,7 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
         }
     }
 
-    // 处理客户端点击“提取经验”按钮（通过原版菜单按钮协议）
+    // 处理客户端点击“提取经验”按钮
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == 0 && this.blockEntity != null) {
@@ -70,6 +73,10 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
         return this.data.get(2);
     }
 
+    public int getExpRate() {
+        return this.data.get(3);
+    }
+
     public boolean isLit() {
         return this.data.get(0) > 0;
     }
@@ -79,6 +86,13 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
         int max = this.data.get(1);
         if (max == 0) return 0;
         return lit * pixels / max;
+    }
+
+    public int getExpProgressScaled(int pixels) {
+        int stored = getStoredExp();
+        if (stored <= 0) return 0;
+        int scaled = Math.round((float) stored / (float) ExpBurnerBlockEntity.MAX_EXP_CAPACITY * (float) pixels);
+        return Math.min(pixels, Math.max(1, scaled));
     }
 
     @Override
@@ -91,7 +105,7 @@ public class ExpBurnerMenu extends AbstractContainerMenu {
             if (index == 0) { // 机器燃料槽移到玩家背包
                 if (!this.moveItemStackTo(stackInSlot, 1, 37, true)) return ItemStack.EMPTY;
             } else { // 玩家背包移到机器槽位
-                if (ForgeHooks.getBurnTime(stackInSlot, RecipeType.SMELTING) > 0) {
+                if (ExpBurnerBlockEntity.getFuelBurnDuration(stackInSlot) > 0) {
                     if (!this.moveItemStackTo(stackInSlot, 0, 1, false)) return ItemStack.EMPTY;
                 } else {
                     return ItemStack.EMPTY;

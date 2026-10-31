@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/mephistopheles_engine_front_on",
+    "down": "moonproject:block/mephistopheles_engine_bottom",
+    "up": "moonproject:block/mephistopheles_engine_top",
+    "north": "moonproject:block/mephistopheles_engine_front_on",
+    "south": "moonproject:block/mephistopheles_engine_side_on",
+    "west": "moonproject:block/mephistopheles_engine_side_on",
+    "east": "moonproject:block/mephistopheles_engine_side_on"
+  }
+}

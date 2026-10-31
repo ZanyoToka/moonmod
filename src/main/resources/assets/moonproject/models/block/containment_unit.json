@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/containment_unit_front",
+    "down": "moonproject:block/containment_unit_bottom",
+    "up": "moonproject:block/containment_unit_top",
+    "north": "moonproject:block/containment_unit_front",
+    "south": "moonproject:block/containment_unit_side",
+    "west": "moonproject:block/containment_unit_side",
+    "east": "moonproject:block/containment_unit_side"
+  }
+}

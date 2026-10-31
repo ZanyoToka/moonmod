@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,extracting=false": {
+      "model": "moonproject:block/identity_extractor"
+    },
+    "facing=east,extracting=false": {
+      "model": "moonproject:block/identity_extractor",
+      "y": 90
+    },
+    "facing=south,extracting=false": {
+      "model": "moonproject:block/identity_extractor",
+      "y": 180
+    },
+    "facing=west,extracting=false": {
+      "model": "moonproject:block/identity_extractor",
+      "y": 270
+    },
+    "facing=north,extracting=true": {
+      "model": "moonproject:block/identity_extractor_extracting"
+    },
+    "facing=east,extracting=true": {
+      "model": "moonproject:block/identity_extractor_extracting",
+      "y": 90
+    },
+    "facing=south,extracting=true": {
+      "model": "moonproject:block/identity_extractor_extracting",
+      "y": 180
+    },
+    "facing=west,extracting=true": {
+      "model": "moonproject:block/identity_extractor_extracting",
+      "y": 270
+    }
+  }
+}

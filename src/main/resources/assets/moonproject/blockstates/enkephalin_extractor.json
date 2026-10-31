@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,working=false": {
+      "model": "moonproject:block/enkephalin_extractor"
+    },
+    "facing=east,working=false": {
+      "model": "moonproject:block/enkephalin_extractor",
+      "y": 90
+    },
+    "facing=south,working=false": {
+      "model": "moonproject:block/enkephalin_extractor",
+      "y": 180
+    },
+    "facing=west,working=false": {
+      "model": "moonproject:block/enkephalin_extractor",
+      "y": 270
+    },
+    "facing=north,working=true": {
+      "model": "moonproject:block/enkephalin_extractor_working"
+    },
+    "facing=east,working=true": {
+      "model": "moonproject:block/enkephalin_extractor_working",
+      "y": 90
+    },
+    "facing=south,working=true": {
+      "model": "moonproject:block/enkephalin_extractor_working",
+      "y": 180
+    },
+    "facing=west,working=true": {
+      "model": "moonproject:block/enkephalin_extractor_working",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/identity_extractor_front",
+    "down": "moonproject:block/identity_extractor_bottom",
+    "up": "moonproject:block/identity_extractor_top",
+    "north": "moonproject:block/identity_extractor_front",
+    "south": "moonproject:block/identity_extractor_side",
+    "west": "moonproject:block/identity_extractor_side",
+    "east": "moonproject:block/identity_extractor_side"
+  }
+}
