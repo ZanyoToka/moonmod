@@ -4,6 +4,7 @@ import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.block.ContainmentUnitBlock;
 import com.moonproject.moonmod.block.EnkephalinExtractorBlock;
 import com.moonproject.moonmod.block.ExpBurnerBlock;
+import com.moonproject.moonmod.block.ResonanceCollectorBlock;
 import com.moonproject.moonmod.block.MeltdownSirenBlock;
 import com.moonproject.moonmod.block.MephistophelesSeatBlock;
 import com.moonproject.moonmod.block.ReinforcedPlatingBlock;
@@ -39,6 +40,10 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ExpBurnerBlock.LIT) ? 13 : 0)
             ));
+
+    // 场谐振能源采集单元：从异想体提取脑啡肽的装置
+    public static final RegistryObject<Block> RESONANCE_COLLECTOR = registerBlock("resonance_collector",
+            ResonanceCollectorBlock::new);
 
     // 边狱巴士特色座椅 —— 梅菲斯特客席
     public static final RegistryObject<Block> MEPHISTOPHELES_SEAT = registerBlock("mephistopheles_seat",

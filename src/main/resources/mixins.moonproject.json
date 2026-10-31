@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.moonproject.moonmod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "moonproject.refmap.json",
+  "mixins": [],
+  "client": [
+    "InventoryMenuMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

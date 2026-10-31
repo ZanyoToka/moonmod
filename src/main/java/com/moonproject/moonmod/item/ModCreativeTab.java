@@ -25,6 +25,10 @@ public class ModCreativeTab {
                         // 物品与装备
                         output.accept(ModItems.ABNORMALITY_FRAGMENT.get());
                         output.accept(ModItems.EGO_CORE.get());
+                        output.accept(ModItems.ABNORMALITY_CORE.get());
+                        output.accept(ModItems.FINAL_MATCH.get());
+                        output.accept(ModItems.FINAL_MATCH_LIGHT.get());
+                        output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.REGRET.get());
                         output.accept(ModItems.ALAYA_VIJNANA.get());
                         output.accept(ModItems.EGO_HELMET.get());
@@ -34,6 +38,7 @@ public class ModCreativeTab {
 
                         // 方块设施
                         output.accept(ModBlocks.EXP_BURNER.get());
+                        output.accept(ModBlocks.RESONANCE_COLLECTOR.get());
                         output.accept(ModBlocks.MEPHISTOPHELES_SEAT.get());
                         output.accept(ModBlocks.CONTAINMENT_UNIT.get());
                         output.accept(ModBlocks.ENKEPHALIN_EXTRACTOR.get());

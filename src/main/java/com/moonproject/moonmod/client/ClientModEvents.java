@@ -2,6 +2,7 @@ package com.moonproject.moonmod.client;
 
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.client.gui.*;
+import com.moonproject.moonmod.client.renderer.ScorchedGirlRenderer;
 import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -27,11 +28,14 @@ public class ClientModEvents {
             MenuScreens.register(ModMenus.KCORP_INJECTOR_MENU.get(), KCorpInjectorScreen::new);
             MenuScreens.register(ModMenus.GOLDEN_BOUGH_SHRINE_MENU.get(), GoldenBoughShrineScreen::new);
             MenuScreens.register(ModMenus.REINFORCED_PLATING_MENU.get(), ReinforcedPlatingScreen::new);
+            MenuScreens.register(ModMenus.RESONANCE_COLLECTOR_MENU.get(), ResonanceCollectorScreen::new);
+            MenuScreens.register(ModMenus.TRINKET_MENU.get(), TrinketScreen::new);
         });
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.SEAT.get(), SeatRenderer::new);
+        event.registerEntityRenderer(ModEntities.SCORCHED_GIRL.get(), ScorchedGirlRenderer::new);
     }
 }

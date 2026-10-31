@@ -3,6 +3,9 @@ package com.moonproject.moonmod.init;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.gui.*;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.SimpleContainer;
+import com.moonproject.moonmod.gui.TrinketMenu;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,6 +19,10 @@ public class ModMenus {
     // 1. 经验焚书炉
     public static final RegistryObject<MenuType<ExpBurnerMenu>> EXP_BURNER_MENU =
             MENUS.register("exp_burner_menu", () -> IForgeMenuType.create(ExpBurnerMenu::new));
+
+    // 1.5 场谐振能源采集单元
+    public static final RegistryObject<MenuType<ResonanceCollectorMenu>> RESONANCE_COLLECTOR_MENU =
+            MENUS.register("resonance_collector_menu", () -> IForgeMenuType.create(ResonanceCollectorMenu::new));
 
     // 2. 异想体收容单元
     public static final RegistryObject<MenuType<ContainmentUnitMenu>> CONTAINMENT_UNIT_MENU =
@@ -52,6 +59,11 @@ public class ModMenus {
     // 10. 都市重装防爆壁
     public static final RegistryObject<MenuType<ReinforcedPlatingMenu>> REINFORCED_PLATING_MENU =
             MENUS.register("reinforced_plating_menu", () -> IForgeMenuType.create(ReinforcedPlatingMenu::new));
+
+    /** 饰品界面。 */
+    public static final RegistryObject<MenuType<TrinketMenu>> TRINKET_MENU =
+            MENUS.register("trinket_menu", () -> net.minecraftforge.common.extensions.IForgeMenuType.create(
+                    (id, inv, buf) -> new TrinketMenu(id, inv)));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

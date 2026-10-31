@@ -1,6 +1,7 @@
 package com.moonproject.moonmod.init;
 
 import com.moonproject.moonmod.MoonProjectMod;
+import com.moonproject.moonmod.entity.ScorchedGirlEntity;
 import com.moonproject.moonmod.entity.SeatEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -25,6 +26,14 @@ public class ModEntities {
                             .updateInterval(20)
                             .build("seat")
             );
+
+    /** 焦化少女（TETH）：靠近玩家自爆。 */
+    public static final RegistryObject<EntityType<ScorchedGirlEntity>> SCORCHED_GIRL =
+            ENTITY_TYPES.register("scorched_girl", () -> EntityType.Builder
+                    .of(ScorchedGirlEntity::new, MobCategory.MONSTER)
+                    .sized(0.55F, 1.0F)
+                    .clientTrackingRange(8)
+                    .build("scorched_girl"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

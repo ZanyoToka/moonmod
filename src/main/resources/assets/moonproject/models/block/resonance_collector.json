@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "moonproject:block/resonance_front",
+    "down":  "moonproject:block/resonance_bottom",
+    "up":    "moonproject:block/resonance_top",
+    "north": "moonproject:block/resonance_front",
+    "south": "moonproject:block/resonance_back",
+    "east":  "moonproject:block/resonance_side_r",
+    "west":  "moonproject:block/resonance_side_l"
+  }
+}

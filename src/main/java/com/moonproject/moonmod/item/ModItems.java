@@ -64,6 +64,22 @@ public class ModItems {
      * 天杀星刀·阿赖耶识（设计规格书 5.2b）：
      * 鞘击 / 拔刀双形态，面板伤害与攻速由 AlayaAttributeHandler 按形态下发，数值全在 Config。
      */
+    /** 脑啡肽：从异想体提取的资源，后续用于在工作方块合成 E.G.O 装备。 */
+    /** 异想体核心：放进采集单元的中央槽，用来指定要提取的异想体。 */
+    public static final RegistryObject<Item> ABNORMALITY_CORE = ITEMS.register("abnormality_core",
+            () -> new Item(new Item.Properties()));
+
+    /** 终末火柴：焦化少女的异想体核心（工作方块中央槽用）。 */
+    public static final RegistryObject<Item> FINAL_MATCH = ITEMS.register("final_match",
+            () -> new AbnormalityCoreItem("scorched_girl", new Item.Properties()));
+
+    /** 终末火柴之光：焦化少女核心对应的异想体饰品（头饰）。 */
+    public static final RegistryObject<Item> FINAL_MATCH_LIGHT = ITEMS.register("final_match_light",
+            () -> new AbnormalityTrinketItem("scorched_girl", "head", new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
+            () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> ALAYA_VIJNANA = ITEMS.register("alaya_vijnana",
             () -> new AlayaVijnanaItem(new Item.Properties().stacksTo(1).fireResistant()));
 }

@@ -4,6 +4,7 @@ import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.blockentity.ContainmentUnitBlockEntity;
 import com.moonproject.moonmod.blockentity.EnkephalinExtractorBlockEntity;
 import com.moonproject.moonmod.blockentity.ExpBurnerBlockEntity;
+import com.moonproject.moonmod.blockentity.ResonanceCollectorBlockEntity;
 import com.moonproject.moonmod.blockentity.MeltdownSirenBlockEntity;
 import com.moonproject.moonmod.blockentity.IdentityExtractorBlockEntity;
 import com.moonproject.moonmod.blockentity.MephistophelesEngineBlockEntity;
@@ -23,6 +24,12 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("exp_burner", () ->
                     BlockEntityType.Builder.of(ExpBurnerBlockEntity::new, ModBlocks.EXP_BURNER.get()).build(null)
             );
+
+    /** 场谐振能源采集单元的方块实体。 */
+    public static final RegistryObject<BlockEntityType<ResonanceCollectorBlockEntity>> RESONANCE_COLLECTOR =
+            BLOCK_ENTITIES.register("resonance_collector", () ->
+                    BlockEntityType.Builder.of(ResonanceCollectorBlockEntity::new,
+                            ModBlocks.RESONANCE_COLLECTOR.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<ContainmentUnitBlockEntity>> CONTAINMENT_UNIT =
             BLOCK_ENTITIES.register("containment_unit", () ->

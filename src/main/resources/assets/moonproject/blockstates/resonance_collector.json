@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "moonproject:block/resonance_collector" }
+  }
+}
