@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
  * <p>每个核心 {@code coreId} 有且只有一个饰品；映射关系在
  * {@code com.moonproject.moonmod.item.CoreTrinketRegistry} 里登记。</p>
  */
-public class AbnormalityTrinketItem extends Item implements top.theillusivec4.curios.api.type.capability.ICurioItem {
+public class AbnormalityTrinketItem extends Item {
 
     private final String coreId;
     private final String slot;

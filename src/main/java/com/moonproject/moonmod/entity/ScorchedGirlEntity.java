@@ -175,6 +175,13 @@ public class ScorchedGirlEntity extends Monster {
         if (!(this.level() instanceof ServerLevel server)) {
             return;
         }
+        // 最终检查：只要附近有创造/旁观玩家，就绝不爆炸
+        for (Player p : server.getPlayers(p -> p.distanceToSqr(this) < 64.0D)) {
+            if (p.isCreative() || p.isSpectator()) {
+                this.fuse = -1;
+                return;
+            }
+        }
         server.explode(this, this.getX(), this.getY() + 0.5D, this.getZ(),
                 EXPLODE_RADIUS, Level.ExplosionInteraction.MOB);
         // 额外补一次火焰伤害，保证数值可控
@@ -201,6 +208,13 @@ public class ScorchedGirlEntity extends Monster {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         fuse = tag.getInt("Fuse");
+        // 校验：fuse 必须是 -1（未点燃）或 1..FUSE_TICKS（点燃中），其它值一律重置
+        if (fuse < -1 || fuse > FUSE_TICKS) {
+            fuse = -1;
+        }
+        if (fuse == 0) {
+            fuse = -1;
+        }
         if (tag.hasUUID("LockedTarget")) {
             lockedTarget = tag.getUUID("LockedTarget");
         }

@@ -128,7 +128,8 @@ repositories {
 
 dependencies {
     // Curios API（饰品栏）：本地 jar，放在 libs/ 目录
-    implementation fg.deobf(files("libs/curios-forge-5.14.1+1.20.1.jar"))
+    // Curios 在 ForgeGradle 环境下 refmap 无法重映射（@Shadow f_35978_），改用原版头盔栏承载饰品
+    // implementation fg.deobf(files("libs/curios-forge-5.7.2+1.20.1.jar"))
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
     // The "userdev" classifier will be requested and setup by ForgeGradle.
@@ -143,6 +144,9 @@ dependencies {
     //   排查方向：Forge 与 EF 的 mixin 环境（mixin 版本 / -Dmixin.env.disableRefMap / EF 官方支持的 Forge 版本）。
     // 恢复时：取消下面注释，并删掉 run/config 下旧的 epicfight 配置。
     implementation fg.deobf('maven.modrinth:epic-fight:20.14.8-mc1.20.1-forge')
+
+    // Mixin 注解处理器：生成 refmap，让我们的 mixin 在开发环境生效
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

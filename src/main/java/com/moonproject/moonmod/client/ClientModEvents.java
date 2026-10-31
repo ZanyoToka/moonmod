@@ -3,6 +3,7 @@ package com.moonproject.moonmod.client;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.client.gui.ExpBurnerScreen;
 import com.moonproject.moonmod.client.gui.ResonanceCollectorScreen;
+import com.moonproject.moonmod.client.gui.TrinketScreen;
 import com.moonproject.moonmod.client.renderer.ScorchedGirlRenderer;
 import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
@@ -22,6 +23,7 @@ public class ClientModEvents {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenus.EXP_BURNER_MENU.get(), ExpBurnerScreen::new);
             MenuScreens.register(ModMenus.RESONANCE_COLLECTOR_MENU.get(), ResonanceCollectorScreen::new);
+            MenuScreens.register(ModMenus.TRINKET_MENU.get(), TrinketScreen::new);
         });
     }
 
