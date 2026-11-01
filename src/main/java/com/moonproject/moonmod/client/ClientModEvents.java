@@ -29,7 +29,7 @@ public class ClientModEvents {
             MenuScreens.register(ModMenus.GOLDEN_BOUGH_SHRINE_MENU.get(), GoldenBoughShrineScreen::new);
             MenuScreens.register(ModMenus.REINFORCED_PLATING_MENU.get(), ReinforcedPlatingScreen::new);
             MenuScreens.register(ModMenus.RESONANCE_COLLECTOR_MENU.get(), ResonanceCollectorScreen::new);
-            MenuScreens.register(ModMenus.TRINKET_MENU.get(), TrinketScreen::new);
+            // Trinket 界面由 Curios API 原生界面承载
         });
     }
 

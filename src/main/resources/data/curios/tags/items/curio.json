@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#curios:head",
+    "#curios:necklace",
+    "#curios:ring",
+    "#curios:hands"
+  ]
+}

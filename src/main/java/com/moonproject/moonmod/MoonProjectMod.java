@@ -53,6 +53,16 @@ public class MoonProjectMod {
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);
 
+        modEventBus.addListener(this::commonSetup);
+
         LOGGER.info("[月亮计划] 模组加载成功。");
+    }
+
+    private void commonSetup(final net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            com.moonproject.moonmod.item.CoreTrinketRegistry.register(
+                    (com.moonproject.moonmod.item.AbnormalityCoreItem) ModItems.FINAL_MATCH.get(),
+                    (com.moonproject.moonmod.item.AbnormalityTrinketItem) ModItems.FINAL_MATCH_LIGHT.get());
+        });
     }
 }

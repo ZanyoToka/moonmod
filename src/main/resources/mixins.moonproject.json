@@ -5,9 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "moonproject.refmap.json",
   "mixins": [],
-  "client": [
-    "InventoryMenuMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }

@@ -5,7 +5,7 @@ import com.moonproject.moonmod.gui.*;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.SimpleContainer;
-import com.moonproject.moonmod.gui.TrinketMenu;
+
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -60,10 +60,10 @@ public class ModMenus {
     public static final RegistryObject<MenuType<ReinforcedPlatingMenu>> REINFORCED_PLATING_MENU =
             MENUS.register("reinforced_plating_menu", () -> IForgeMenuType.create(ReinforcedPlatingMenu::new));
 
-    /** 饰品界面。 */
-    public static final RegistryObject<MenuType<TrinketMenu>> TRINKET_MENU =
-            MENUS.register("trinket_menu", () -> net.minecraftforge.common.extensions.IForgeMenuType.create(
-                    (id, inv, buf) -> new TrinketMenu(id, inv)));
+
+
+
+
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

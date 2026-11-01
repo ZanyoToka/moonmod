@@ -74,6 +74,10 @@ minecraft {
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
+            // ForgeGradle 开发环境下第三方 mod（Curios / Epic Fight 等）的 mixin 需要 refmap 重映射
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -82,9 +86,6 @@ minecraft {
         }
 
         client {
-            // ForgeGradle 开发环境下第三方 mod 的 mixin 需要 refmap 重映射（Epic Fight 必需）
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
         }
@@ -115,6 +116,11 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+
+    maven {
+        name = 'OctoStudios'
+        url = 'https://maven.theillusivec4.top/'
+    }
     // 阿里云镜像加速 Maven Central
     maven { url = 'https://maven.aliyun.com/repository/public' }
 
@@ -129,7 +135,7 @@ repositories {
 dependencies {
     // Curios API（饰品栏）：本地 jar，放在 libs/ 目录
     // Curios 在 ForgeGradle 环境下 refmap 无法重映射（@Shadow f_35978_），改用原版头盔栏承载饰品
-    // implementation fg.deobf(files("libs/curios-forge-5.7.2+1.20.1.jar"))
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:5.7.2+1.20.1")
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
     // The "userdev" classifier will be requested and setup by ForgeGradle.
@@ -214,6 +220,7 @@ publishing {
         }
     }
     repositories {
+
         maven {
             url "file://${project.projectDir}/mcmodsrepo"
         }

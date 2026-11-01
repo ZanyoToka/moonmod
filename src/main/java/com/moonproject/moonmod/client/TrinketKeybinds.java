@@ -10,7 +10,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
-/** 饰品界面快捷键（默认 T）。 */
+/**
+ * 饰品快捷键（默认 J，Curios 自身默认 G 且背包界面提供饰品按钮）。
+ */
 public final class TrinketKeybinds {
 
     public static final KeyMapping OPEN_TRINKETS = new KeyMapping(
