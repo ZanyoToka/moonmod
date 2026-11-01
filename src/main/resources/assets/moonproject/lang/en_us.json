@@ -50,6 +50,9 @@
   "entity.moonproject.seat": "Mephistopheles Passenger Seat",
   "item.moonproject.mephistopheles_seat": "Mephistopheles Passenger Seat",
 
+  "block.moonproject.resonance_collector": "Field Resonance Energy Collector",
+  "item.moonproject.resonance_collector": "Field Resonance Energy Collector",
+
   "block.moonproject.containment_unit": "Abnormality Containment Unit",
   "item.moonproject.containment_unit": "Abnormality Containment Unit",
   "container.moonproject.containment_unit": "Abnormality Containment Unit",

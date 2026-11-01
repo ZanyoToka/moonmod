@@ -40,6 +40,7 @@
   "item.moonproject.exp_burner": "经验焚书熔炉",
   "container.moonproject.exp_burner": "经验焚书熔炉",
   "block.moonproject.resonance_collector": "场谐振能源采集单元",
+  "item.moonproject.resonance_collector": "场谐振能源采集单元",
   "tooltip.moonproject.exp_burner": "焚烧书籍、附魔书或常规燃料，将知识提炼转化为纯净经验值与余烬。",
   "gui.moonproject.exp_burner.stored": "经验储量: %s / %s EXP",
   "gui.moonproject.exp_burner.rate": "转化速率: +%s EXP/秒",

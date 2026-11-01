@@ -15,6 +15,23 @@
     3. **底层实现逻辑透明化**（必须遵循“三问白盒说明法”，保证考核与 Code Review 可行性）。
   - 创建并规范化本 `CHANGELOG.md`，确立后续团队开发提交流程。
 
+### [修复 / Fixed]
+- **补齐「场谐振能源采集单元」缺失的语言键**：
+  - `en_us.json` 补 `block.moonproject.resonance_collector` / `item.moonproject.resonance_collector`（此前英文客户端会直接显示原始 key）。
+  - `zh_cn.json` 补 `item.moonproject.resonance_collector`。
+  - `python docs/verify_assets.py` 由「1 个问题」恢复为全绿。
+- **修复「阿赖耶识」3D OBJ 模型被覆盖成平面 2D 的问题**：
+  - 现象：鞘/拔刀两种形态在物品栏与手持时都退化为一张平面贴图，Blender 高模消失。
+  - 根因：`0dcee77 加入方块` 提交批量新增方块时，把 `alaya_vijnana.json` 与 `alaya_vijnana_drawn.json` 的 `"loader": "moonproject:obj_item"` 误改成 `"parent": "minecraft:item/handheld"`（同类误伤第二次，此前 `3114524` 已修过一次）。
+  - 修复：两份模型 JSON 按 `3114524` 内容还原为 OBJ 加载器定义（保留材质映射 `BladeSteel`/`TsubaGold`/`GoldFit`/`HiltMat`/`SheathMat`、`flip_v`、完整 `display` 变换表与鞘态 `moonproject:drawn` 谓词 overrides）。
+  - 说明：Java 侧 `client/obj/ObjItemModel`、`client/ObjModelRegistration`、`AlayaClientSetup:25` 的谓词注册与五张材质贴图均在，未改动；OBJ/MTL 资产完好。
+- **恢复「阿赖耶识」出鞘烧血机制**：
+  - 现象：拔刀后不再持续掉血，「以血为代价换强度」的核心代价机制消失。
+  - 根因：同样是 `0dcee77 加入方块` 用较旧的文件覆盖了 `event/AbyssCallEvents.java`，删掉了 `DRAIN_INTERVAL`（20 tick）、`DRAIN_DIVISOR`（30.0F）、拔刀态判定与 `setHealth` 扣血逻辑；同时把「阿鼻叫唤」触发条件从「拔刀态」放宽成「手持即触发」。
+  - 修复：重写 `AbyssCallEvents`——`holding = held.is(ModItems.ALAYA_VIJNANA)`，`drawn = holding && AlayaVijnanaItem.isDrawnBlade(held)`；`Sanity.setAbyssCall/setFixedPanic(player, holding)`；持械时理智固定为 `-44`；`drawn` 时每 `interval` tick 扣 `maxHealth / divisor` 血量（纯服务端 `setHealth`，不走 `hurt`，无无敌帧与抖动），血量下限 0，`divisor <= 0` 即关闭。
+  - 新增可调配置（遵循“数值必须进 Config”铁律）：`MoonProjectConfig.ALAYA_BLOOD_DRAIN_DIVISOR`（key `bloodDrainDivisor`，默认 `30.0`，范围 0–1000，0 = 关闭）与 `ALAYA_BLOOD_DRAIN_INTERVAL_TICKS`（key `bloodDrainIntervalTicks`，默认 `20`，范围 1–1200），并提供 `bloodDrainDivisor()` / `bloodDrainIntervalTicks()` 读取器。
+  - 验证：`gradlew compileJava` → `BUILD SUCCESSFUL`；`python docs/verify_assets.py` 全绿（Config 方法 55 / Config 键 58）。
+
 ---
 
 ## [v0.1.3] - 2026-10-31

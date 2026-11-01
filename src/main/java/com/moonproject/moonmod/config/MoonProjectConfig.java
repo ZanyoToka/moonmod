@@ -29,6 +29,10 @@ public final class MoonProjectConfig {
     public static final double DEFAULT_ENTITY_REACH_BONUS = 2.5D;
     public static final int DEFAULT_DRAW_DURATION_TICKS = 600;
     public static final int DEFAULT_SWITCH_COOLDOWN_TICKS = 60;
+    /** 阿鼻叫唤「出鞘烧血」默认每次扣 maxHealth / 30（30 次 = 30 秒扣完）。 */
+    public static final double DEFAULT_BLOOD_DRAIN_DIVISOR = 30.0D;
+    /** 「出鞘烧血」默认每秒结算一次。 */
+    public static final int DEFAULT_BLOOD_DRAIN_INTERVAL_TICKS = 20;
 
     public static final ForgeConfigSpec.DoubleValue ALAYA_SHEATHED_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue ALAYA_DRAWN_DAMAGE;
@@ -39,6 +43,10 @@ public final class MoonProjectConfig {
     public static final ForgeConfigSpec.IntValue ALAYA_SWITCH_COOLDOWN_TICKS;
     public static final ForgeConfigSpec.IntValue ALAYA_MEMORY_BURN_INTERVAL_TICKS;
     public static final ForgeConfigSpec.IntValue ALAYA_MEMORY_COST_PER_BURN;
+    /** 阿鼻叫唤「出鞘烧血」：每次结算扣除 maxHealth / 该值（0 = 关闭烧血）。 */
+    public static final ForgeConfigSpec.DoubleValue ALAYA_BLOOD_DRAIN_DIVISOR;
+    /** 阿鼻叫唤「出鞘烧血」的结算间隔（tick）。 */
+    public static final ForgeConfigSpec.IntValue ALAYA_BLOOD_DRAIN_INTERVAL_TICKS;
     public static final ForgeConfigSpec.DoubleValue ALAYA_ARMOR_PIERCE;
     public static final ForgeConfigSpec.IntValue ALAYA_SCAR_DAMAGE;
     public static final ForgeConfigSpec.IntValue ALAYA_SCAR_INTERVAL_TICKS;
@@ -135,6 +143,12 @@ public final class MoonProjectConfig {
         ALAYA_MEMORY_COST_PER_BURN = builder
                 .comment("每次烧掉的记忆值（打样期以经验等级计；0 = 关闭记忆代价）")
                 .defineInRange("memoryCostPerBurn", 1, 0, 100);
+        ALAYA_BLOOD_DRAIN_DIVISOR = builder
+                .comment("阿鼻叫唤「出鞘烧血」：每次结算扣掉 maxHealth / 该值（默认 30 = 每秒 1/30，30 秒扣完整条血；0 = 关闭）")
+                .defineInRange("bloodDrainDivisor", DEFAULT_BLOOD_DRAIN_DIVISOR, 0.0D, 1000.0D);
+        ALAYA_BLOOD_DRAIN_INTERVAL_TICKS = builder
+                .comment("「出鞘烧血」的结算间隔（tick，默认 20 = 每秒一次）")
+                .defineInRange("bloodDrainIntervalTicks", DEFAULT_BLOOD_DRAIN_INTERVAL_TICKS, 1, 1200);
         ALAYA_ARMOR_PIERCE = builder
                 .comment("解放态护甲穿透比例（0.25 = 无视 25% 护甲）")
                 .defineInRange("armorPierce", 0.25D, 0.0D, 1.0D);
@@ -329,6 +343,16 @@ public final class MoonProjectConfig {
     /** 每次烧掉的记忆（经验等级）；0 = 关闭记忆代价。 */
     public static int memoryCostPerBurn() {
         return SPEC.isLoaded() ? ALAYA_MEMORY_COST_PER_BURN.get() : 1;
+    }
+
+    /** 阿鼻叫唤「出鞘烧血」每次结算扣掉 maxHealth / 该值；0 = 关闭烧血。 */
+    public static double bloodDrainDivisor() {
+        return SPEC.isLoaded() ? ALAYA_BLOOD_DRAIN_DIVISOR.get() : DEFAULT_BLOOD_DRAIN_DIVISOR;
+    }
+
+    /** 阿鼻叫唤「出鞘烧血」的结算间隔（tick）。 */
+    public static int bloodDrainIntervalTicks() {
+        return SPEC.isLoaded() ? ALAYA_BLOOD_DRAIN_INTERVAL_TICKS.get() : DEFAULT_BLOOD_DRAIN_INTERVAL_TICKS;
     }
 
     public static int scarDamage() {
