@@ -3,6 +3,7 @@ package com.moonproject.moonmod.entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import com.moonproject.moonmod.config.MoonProjectConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -20,17 +21,14 @@ import net.minecraft.world.phys.AABB;
 /**
  * 焦化少女（TETH）：靠近玩家后点燃自己并自爆。
  *
- * <p>机制：玩家进入 {@link #TRIGGER_RANGE} 格 → 开始引线 {@link #FUSE_TICKS}（3 秒，身体冒火星）
- * → 引线结束自爆（半径 {@link #EXPLODE_RADIUS}，不破坏方块），自身死亡。</p>
+ * <p>机制：玩家进入触发范围 → 开始引线（3 秒，身体冒火星）
+ * → 引线结束自爆（默认半径 4 格，不破坏方块），自身死亡。</p>
+ *
+ * <p>数值全部来自 {@code MoonProjectConfig} 的 {@code scorched_girl} 段：
+ * {@code triggerRange} / {@code fuseTicks} / {@code explodeRadius} / {@code explodeDamage}。</p>
  */
 public class ScorchedGirlEntity extends Monster {
 
-    /** 触发引线的距离（格）。 */
-    public static final double TRIGGER_RANGE = 1.0D;
-    /** 引线时长（tick）：3 秒。 */
-    public static final int FUSE_TICKS = 1;
-    /** 爆炸半径。 */
-    public static final float EXPLODE_RADIUS = 200.0F;
     /** 出生后的保护期（tick），期间不会开始引线。 */
     public static final int SPAWN_GRACE_TICKS = 20;
     /** 生成时要求离玩家至少这么远（格），避免直接刷在玩家身边。 */
@@ -122,7 +120,7 @@ public class ScorchedGirlEntity extends Monster {
 
     /** 引线剩余比例（1.0 → 0.0），供渲染层做闪烁。 */
     public float fuseProgress() {
-        return fuse < 0 ? 0.0F : 1.0F - (float) fuse / FUSE_TICKS;
+        return fuse < 0 ? 0.0F : 1.0F - (float) fuse / Math.max(1, MoonProjectConfig.scorchedGirlFuseTicks());
     }
 
     @Override
@@ -153,7 +151,7 @@ public class ScorchedGirlEntity extends Monster {
         }
 
         // 检测玩家是否进入触发范围
-        Player nearest = this.level().getNearestPlayer(this, TRIGGER_RANGE);
+        Player nearest = this.level().getNearestPlayer(this, MoonProjectConfig.scorchedGirlTriggerRange());
         if (nearest == null) {
             return;
         }
@@ -166,7 +164,7 @@ public class ScorchedGirlEntity extends Monster {
                 && (locked.isCreative() || locked.isSpectator())) {
             return;
         }
-        fuse = FUSE_TICKS;
+        fuse = MoonProjectConfig.scorchedGirlFuseTicks();
         this.playSound(SoundEvents.TNT_PRIMED, 1.0F, 1.2F);
     }
 
@@ -182,15 +180,26 @@ public class ScorchedGirlEntity extends Monster {
                 return;
             }
         }
+        // 不破坏方块：ExplosionInteraction.NONE，只造成伤害与击退
+        float radius = (float) MoonProjectConfig.scorchedGirlExplodeRadius();
+        float bonusDamage = (float) MoonProjectConfig.scorchedGirlExplodeDamage();
         server.explode(this, this.getX(), this.getY() + 0.5D, this.getZ(),
-                EXPLODE_RADIUS, Level.ExplosionInteraction.MOB);
-        // 额外补一次火焰伤害，保证数值可控
-        AABB box = this.getBoundingBox().inflate(EXPLODE_RADIUS);
+                radius, Level.ExplosionInteraction.NONE);
+        // 额外补一次固定伤害，保证数值可控（不受爆炸衰减影响）
+        AABB box = this.getBoundingBox().inflate(radius);
         for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class, box)) {
             if (victim != this && !(victim instanceof ScorchedGirlEntity)) {
-                victim.hurt(server.damageSources().explosion(this, this), 100.0F);
+                if (bonusDamage > 0.0F) {
+                    victim.hurt(server.damageSources().explosion(this, this), bonusDamage);
+                }
                 victim.setSecondsOnFire(3);
             }
+        }
+        // 自爆后可能留下「终末火柴」（焦化少女的异想体核心，收容单元的原料）
+        float dropChance = (float) MoonProjectConfig.scorchedGirlCoreDropChance();
+        if (dropChance > 0.0F && server.random.nextFloat() < dropChance) {
+            this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                    com.moonproject.moonmod.item.ModItems.FINAL_MATCH.get()));
         }
         this.discard();
     }
@@ -208,8 +217,8 @@ public class ScorchedGirlEntity extends Monster {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         fuse = tag.getInt("Fuse");
-        // 校验：fuse 必须是 -1（未点燃）或 1..FUSE_TICKS（点燃中），其它值一律重置
-        if (fuse < -1 || fuse > FUSE_TICKS) {
+        // 校验：fuse 必须是 -1（未点燃）或 1..当前引线时长（点燃中），其它值一律重置
+        if (fuse < -1 || fuse > MoonProjectConfig.scorchedGirlFuseTicks()) {
             fuse = -1;
         }
         if (fuse == 0) {

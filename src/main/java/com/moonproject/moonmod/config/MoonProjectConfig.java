@@ -109,6 +109,30 @@ public final class MoonProjectConfig {
     /** 强化大招「将我抹去，也将你抹去。」需要的斩缘层数。 */
     public static final ForgeConfigSpec.IntValue ERASE_CUTBOND_COST;
 
+    // ===== 异想体收容单元（逆卡巴拉计数 / 收容失效 / 紧急抑制）=====
+    /** 有核心时的基础衰减间隔（tick），默认 80 = 4 秒掉 1 点。 */
+    public static final ForgeConfigSpec.IntValue CONTAINMENT_DECAY_BASE_TICKS;
+    /** 每块「都市重装防爆壁」延长多少 tick 衰减间隔。 */
+    public static final ForgeConfigSpec.IntValue CONTAINMENT_DECAY_PLATING_BONUS_TICKS;
+    /** 紧急抑制一次恢复的逆卡巴拉点数。 */
+    public static final ForgeConfigSpec.IntValue CONTAINMENT_SUPPRESS_RESTORE;
+    /** 紧急抑制优先扣除的经验等级；不足时改扣理智。 */
+    public static final ForgeConfigSpec.IntValue CONTAINMENT_SUPPRESS_XP_LEVELS;
+    /** 紧急抑制扣除的理智值（经验等级不够时才扣）。 */
+    public static final ForgeConfigSpec.IntValue CONTAINMENT_SUPPRESS_SANITY_COST;
+
+    // ===== 焦化少女（TETH·自爆异想体）=====
+    /** 自爆半径（格）。 */
+    public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_EXPLODE_RADIUS;
+    /** 自爆对范围内生物额外造成的固定伤害。 */
+    public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_EXPLODE_DAMAGE;
+    /** 引线时长（tick）。 */
+    public static final ForgeConfigSpec.IntValue SCORCHED_GIRL_FUSE_TICKS;
+    /** 触发引线的距离（格）。 */
+    public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_TRIGGER_RANGE;
+    /** 自爆后掉落异想体核心的概率。 */
+    public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_CORE_DROP_CHANCE;
+
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
@@ -300,6 +324,43 @@ public final class MoonProjectConfig {
                 .defineInRange("eraseCutbondCost", 40, 1, 999);
 
         builder.pop();
+
+        builder.comment("异想体收容单元：逆卡巴拉衰减、收容失效与紧急抑制").push("containment");
+        CONTAINMENT_DECAY_BASE_TICKS = builder
+                .comment("收容单元装载核心后，逆卡巴拉计数的基准衰减间隔（tick，默认 80 = 4 秒掉 1 点）")
+                .defineInRange("decayBaseTicks", 80, 1, 12000);
+        CONTAINMENT_DECAY_PLATING_BONUS_TICKS = builder
+                .comment("每相邻一块「都市重装防爆壁」延长多少 tick 衰减间隔（默认 40；六面最多 80 + 240 = 320 tick）")
+                .defineInRange("decayPlatingBonusTicks", 40, 0, 12000);
+        CONTAINMENT_SUPPRESS_RESTORE = builder
+                .comment("紧急逆卡巴拉抑制一次恢复的点数（默认 25）")
+                .defineInRange("suppressRestore", 25, 1, 100);
+        CONTAINMENT_SUPPRESS_XP_LEVELS = builder
+                .comment("紧急抑制优先扣除的经验等级（默认 3；等级不足时改扣理智）")
+                .defineInRange("suppressXpLevels", 3, 0, 30);
+        CONTAINMENT_SUPPRESS_SANITY_COST = builder
+                .comment("紧急抑制扣除的理智值（默认 10；与经验等级二者取其一，都不够则抑制失败）")
+                .defineInRange("suppressSanityCost", 10, 0, 45);
+        builder.pop();
+
+        builder.comment("焦化少女（TETH）：自爆异想体的数值").push("scorched_girl");
+        SCORCHED_GIRL_EXPLODE_RADIUS = builder
+                .comment("自爆半径（格，默认 4.0；不会破坏方块）")
+                .defineInRange("explodeRadius", 4.0D, 0.0D, 16.0D);
+        SCORCHED_GIRL_EXPLODE_DAMAGE = builder
+                .comment("自爆对范围内生物追加的固定伤害（默认 30）")
+                .defineInRange("explodeDamage", 30.0D, 0.0D, 200.0D);
+        SCORCHED_GIRL_FUSE_TICKS = builder
+                .comment("点燃后的引线时长（tick，默认 60 = 3 秒）")
+                .defineInRange("fuseTicks", 60, 1, 600);
+        SCORCHED_GIRL_TRIGGER_RANGE = builder
+                .comment("玩家进入多少格内会点燃引线（默认 3.0）")
+                .defineInRange("triggerRange", 3.0D, 0.5D, 32.0D);
+        SCORCHED_GIRL_CORE_DROP_CHANCE = builder
+                .comment("自爆后掉落异想体核心的概率（默认 0.35；0 表示不掉落）")
+                .defineInRange("coreDropChance", 0.35D, 0.0D, 1.0D);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -535,5 +596,47 @@ public final class MoonProjectConfig {
 
     public static int eraseCutbondCost() {
         return SPEC.isLoaded() ? ERASE_CUTBOND_COST.get() : 40;
+    }
+
+    // ===== 异想体收容单元 =====
+    public static int containmentDecayBaseTicks() {
+        return SPEC.isLoaded() ? CONTAINMENT_DECAY_BASE_TICKS.get() : 80;
+    }
+
+    public static int containmentDecayPlatingBonusTicks() {
+        return SPEC.isLoaded() ? CONTAINMENT_DECAY_PLATING_BONUS_TICKS.get() : 40;
+    }
+
+    public static int containmentSuppressRestore() {
+        return SPEC.isLoaded() ? CONTAINMENT_SUPPRESS_RESTORE.get() : 25;
+    }
+
+    public static int containmentSuppressXpLevels() {
+        return SPEC.isLoaded() ? CONTAINMENT_SUPPRESS_XP_LEVELS.get() : 3;
+    }
+
+    public static int containmentSuppressSanityCost() {
+        return SPEC.isLoaded() ? CONTAINMENT_SUPPRESS_SANITY_COST.get() : 10;
+    }
+
+    // ===== 焦化少女 =====
+    public static double scorchedGirlExplodeRadius() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_RADIUS.get() : 4.0D;
+    }
+
+    public static double scorchedGirlExplodeDamage() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_DAMAGE.get() : 30.0D;
+    }
+
+    public static int scorchedGirlFuseTicks() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_FUSE_TICKS.get() : 60;
+    }
+
+    public static double scorchedGirlTriggerRange() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_TRIGGER_RANGE.get() : 3.0D;
+    }
+
+    public static double scorchedGirlCoreDropChance() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_CORE_DROP_CHANCE.get() : 0.35D;
     }
 }

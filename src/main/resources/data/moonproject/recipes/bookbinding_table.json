@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LLL",
+    "PBP",
+    "SSS"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "B": {
+      "item": "minecraft:book"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "moonproject:bookbinding_table",
+    "count": 1
+  }
+}

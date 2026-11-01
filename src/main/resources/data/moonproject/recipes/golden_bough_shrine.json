@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GDG",
+    "DOD",
+    "GDG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "O": {
+      "item": "minecraft:gold_block"
+    }
+  },
+  "result": {
+    "item": "moonproject:golden_bough_shrine",
+    "count": 1
+  }
+}

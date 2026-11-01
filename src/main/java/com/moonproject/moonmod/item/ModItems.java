@@ -5,6 +5,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -79,6 +80,11 @@ public class ModItems {
 
     public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
             () -> new Item(new Item.Properties()));
+
+    /** 焦化少女生成蛋：让玩家能在生存/创造里主动引出第一只异想体（掉落异想体核心）。 */
+    public static final RegistryObject<Item> SCORCHED_GIRL_SPAWN_EGG = ITEMS.register("scorched_girl_spawn_egg",
+            () -> new ForgeSpawnEggItem(() -> com.moonproject.moonmod.init.ModEntities.SCORCHED_GIRL.get(),
+                    0x2E2622, 0xFF7A18, new Item.Properties()));
 
     public static final RegistryObject<Item> ALAYA_VIJNANA = ITEMS.register("alaya_vijnana",
             () -> new AlayaVijnanaItem(new Item.Properties().stacksTo(1).fireResistant()));

@@ -1,5 +1,6 @@
 package com.moonproject.moonmod.client.gui;
 
+import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.gui.ContainmentUnitMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -86,6 +87,10 @@ public class ContainmentUnitScreen extends AbstractContainerScreen<ContainmentUn
         String platingText = "防爆壁加成: " + platings + "/6";
         graphics.drawString(this.font, platingText, 8, 56, 0x8E9BAE, false);
 
+        // 当前收容对象（核心身份决定破门后放出的异想体）
+        String contained = "收容对象: " + this.menu.getAbnormalityName();
+        graphics.drawString(this.font, contained, 8, 44, 0x8E9BAE, false);
+
         // 背包文字
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0x728296, false);
     }
@@ -104,6 +109,17 @@ public class ContainmentUnitScreen extends AbstractContainerScreen<ContainmentUn
             list.add(Component.literal("§b逆卡巴拉计数器 (Qlipoth Counter)"));
             list.add(Component.literal("§7当前数值: §f" + this.menu.getQlipothCounter() + " §7/ §f100"));
             list.add(Component.literal("§7当计数归零时将触发§c【收容失效】§7并释放暴走异想体！"));
+            graphics.renderComponentTooltip(this.font, list, mouseX, mouseY);
+        }
+
+        // 抑制按钮 Tooltip：显示当前代价（数值来自 MoonProjectConfig）
+        if (mouseX >= x + 104 && mouseX <= x + 168 && mouseY >= y + 40 && mouseY <= y + 60) {
+            List<Component> list = new ArrayList<>();
+            list.add(Component.literal("§b逆卡巴拉抑制"));
+            list.add(Component.literal("§7恢复安定度: §a+" + MoonProjectConfig.containmentSuppressRestore()));
+            list.add(Component.literal("§7代价（二选一，优先扣经验）:"));
+            list.add(Component.literal("§7  - §e" + MoonProjectConfig.containmentSuppressXpLevels() + " 级经验"));
+            list.add(Component.literal("§7  - §b" + MoonProjectConfig.containmentSuppressSanityCost() + " 点理智"));
             graphics.renderComponentTooltip(this.font, list, mouseX, mouseY);
         }
     }

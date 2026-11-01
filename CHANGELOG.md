@@ -15,6 +15,20 @@
     3. **底层实现逻辑透明化**（必须遵循“三问白盒说明法”，保证考核与 Code Review 可行性）。
   - 创建并规范化本 `CHANGELOG.md`，确立后续团队开发提交流程。
 
+### [新增 / Feat]
+- **收容失效闭环：破门对象由核心决定**：
+  - 过去 `ContainmentUnitBlockEntity.triggerBreach` 无论放什么核心，都生成一只凋灵骷髅占位；现在破门时先读取槽内核心的 `coreId`（`AbnormalityCoreItem.getCoreId`，必须在清空槽位之前读），`scorched_girl` 直接放出**焦化少女本体**（`ModEntities.SCORCHED_GIRL`，带 `setPersistenceRequired` 与「§4[收容失效] 焦化少女」名牌），其它身份回落到「狂暴化身」占位怪，保证任何物品都有破门表现。
+  - 收容核心槽改为只接受 `AbnormalityCoreItem` 与通用「异想体核心」（后者没有 `coreId`，破门时走回落分支）。
+  - 收容单元 GUI 新增「收容对象：<异想体名>」读数；抑制按钮加了悬浮提示（显示恢复量与两种代价）。
+  - 破门警报文本带上异想体名：`[脑叶公司警报] 收容室 (x, y, z) 逆卡巴拉计数归零！<名称> 已突破收容！`
+- **焦化少女生成蛋**（`moonproject:scorched_girl_spawn_egg`）：此前生存里根本没有办法遇到异想体，收容单元等于摆设。现在它自爆后有概率掉落「终末火柴」（焦化少女核心），形成「引怪 → 击杀 → 取核心 → 装机 → 等破门/做抑制」的最小闭环。
+- **9 个方块补齐合成配方**：`containment_unit`、`reinforced_plating`（一次 4 个）、`meltdown_siren`、`enkephalin_extractor`、`identity_extractor`、`bookbinding_table`、`mephistopheles_engine`、`kcorp_injector`、`golden_bough_shrine`。此前 12 个方块只有 3 个有配方，其余只能在创造模式里拿。
+
+### [平衡 / Balance]
+- **焦化少女数值从硬编码改为 Config**：原 `TRIGGER_RANGE=1.0`、`FUSE_TICKS=1`、`EXPLODE_RADIUS=200.0F`（半径 12.5 区块、固定 100 伤害、`ExplosionInteraction.MOB` 会炸地形）是调试残留。现改为 `scorched_girl` 配置段——`triggerRange` 3.0、`fuseTicks` 60（3 秒）、`explodeRadius` 4.0、`explodeDamage` 30、`coreDropChance` 0.35；爆炸改为 `ExplosionInteraction.NONE`，不再破坏方块（与类注释一致）。
+- **紧急抑制实装代价**：原来点按钮白拿 +25 安定度。现在优先扣 `containment.suppressXpLevels`（3 级经验），经验不足改扣 `containment.suppressSanityCost`（10 点理智），两者都不够则抑制失败且不扣任何代价；安定度已满时直接拒绝。
+- **收容单元衰减节拍进 Config**：`80 + 40×防爆壁` 改为 `containment.decayBaseTicks`（80）+ `containment.decayPlatingBonusTicks`（40）× 相邻防爆壁数。
+
 ### [修复 / Fixed]
 - **补齐「场谐振能源采集单元」缺失的语言键**：
   - `en_us.json` 补 `block.moonproject.resonance_collector` / `item.moonproject.resonance_collector`（此前英文客户端会直接显示原始 key）。

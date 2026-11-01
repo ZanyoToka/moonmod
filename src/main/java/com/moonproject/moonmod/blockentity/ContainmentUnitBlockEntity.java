@@ -2,8 +2,12 @@ package com.moonproject.moonmod.blockentity;
 
 import com.moonproject.moonmod.block.ContainmentUnitBlock;
 import com.moonproject.moonmod.block.ReinforcedPlatingBlock;
+import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.init.ModBlockEntities;
+import com.moonproject.moonmod.init.ModEntities;
+import com.moonproject.moonmod.item.AbnormalityCoreItem;
 import com.moonproject.moonmod.item.ModItems;
+import com.moonproject.moonmod.sanity.Sanity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -86,6 +90,8 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
             setChanged();
             if (level != null && !level.isClientSide) {
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+                // 核心变更会影响警报状态（有核心才衰减）
+                updateBlockStateAlert();
             }
         }
 
@@ -96,7 +102,10 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return true; // 允许放入各种异想体核心/碎片
+            // 只接受异想体核心：身份由核心物品自带。通用「异想体核心」也能放，
+            // 但它没有 coreId，破门时会回落到未知异想体的狂暴化身。
+            return stack.getItem() instanceof AbnormalityCoreItem
+                    || stack.is(ModItems.ABNORMALITY_CORE.get());
         }
     };
 
@@ -163,6 +172,29 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
         return !itemHandler.getStackInSlot(0).isEmpty();
     }
 
+    /**
+     * 槽内核心对应的异想体标识（{@code scorched_girl} 等）；不是异想体核心则返回 {@code null}。
+     *
+     * <p>白盒：<b>数据存哪</b> —— 标识不在方块 NBT 里，而是由槽内物品的 {@link AbnormalityCoreItem#getCoreId}
+     * 决定（物品本身就是身份）。BREACH 前必须先取一次，因为破门后槽位会被清空。</p>
+     */
+    @Nullable
+    public String getAbnormalityId() {
+        return AbnormalityCoreItem.getCoreId(itemHandler.getStackInSlot(0));
+    }
+
+    /** 槽内核心对应的显示名，供 GUI/提示使用；不是异想体核心则返回「未装载」。 */
+    public String getAbnormalityName() {
+        String id = getAbnormalityId();
+        if (id == null) {
+            return "未装载";
+        }
+        return switch (id) {
+            case "scorched_girl" -> "焦化少女";
+            default -> id;
+        };
+    }
+
     public ItemStack getCore() {
         return itemHandler.getStackInSlot(0);
     }
@@ -179,16 +211,46 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
     }
 
     /**
-     * 紧急逆卡巴拉抑制：消耗玩家少量理智或经验，恢复 25 点安定度
+     * 紧急逆卡巴拉抑制：付出代价换 +{@code suppressRestore} 点安定度。
+     *
+     * <p>白盒三问：①<b>数据存哪</b> —— 只改本方块 {@code qlipothCounter}（NBT 持久化），
+     * 玩家侧只改经验等级或理智值（后者由 Sanity 存于玩家 persistentData）；
+     * ②<b>如何驱动</b> —— 服务端 GUI 按钮 {@code clickMenuButton(0)} 触发，即时结算，
+     * 结果通过 {@code displayClientMessage} 回给玩家；③<b>边界</b> —— 计数已满时拒绝（不白扣代价）、
+     * 经验等级不足则改扣理智、两者都不够则抑制失败且不改变计数。</p>
      */
-    public void suppressMeltdown(Player player) {
-        if (this.qlipothCounter < MAX_QLIPOTH) {
-            this.setQlipothCounter(this.qlipothCounter + 25);
-            if (this.level != null) {
-                this.level.playSound(null, this.worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.5F);
-            }
-            player.displayClientMessage(Component.literal("§a[收容单元] 逆卡巴拉抑制程序注入成功，安定度 +25！"), true);
+    public boolean suppressMeltdown(Player player) {
+        if (this.qlipothCounter >= MAX_QLIPOTH) {
+            player.displayClientMessage(Component.literal("§7[收容单元] 安定度已满，无需抑制。"), true);
+            return false;
         }
+
+        int xpLevels = MoonProjectConfig.containmentSuppressXpLevels();
+        int sanityCost = MoonProjectConfig.containmentSuppressSanityCost();
+
+        boolean paid = false;
+        if (xpLevels > 0 && player.experienceLevel >= xpLevels) {
+            player.giveExperienceLevels(-xpLevels);
+            paid = true;
+        } else if (sanityCost > 0 && Sanity.get(player) >= sanityCost) {
+            Sanity.add(player, -sanityCost);
+            paid = true;
+        }
+
+        if (!paid) {
+            player.displayClientMessage(Component.literal(
+                    "§c[收容单元] 抑制失败：需要 §e" + xpLevels + " 级经验§c 或 §b" + sanityCost + " 点理智§c。"), true);
+            return false;
+        }
+
+        int restore = MoonProjectConfig.containmentSuppressRestore();
+        this.setQlipothCounter(this.qlipothCounter + restore);
+        if (this.level != null) {
+            this.level.playSound(null, this.worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.5F);
+        }
+        player.displayClientMessage(Component.literal(
+                "§a[收容单元] 逆卡巴拉抑制程序注入成功，安定度 +" + restore + "！"), true);
+        return true;
     }
 
     /**
@@ -241,8 +303,9 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
 
         // 检测收容室 6 面安装的「都市重装防爆壁」数量（0~6）
         int platings = ReinforcedPlatingBlock.countAdjacentPlatings(level, pos);
-        // 防爆壁越多，逆卡巴拉衰减越慢：基准 80 tick (4秒) + 每块防爆壁延长 40 tick (最多 320 tick / 16秒)
-        int decayInterval = 80 + (platings * 40);
+        // 防爆壁越多，逆卡巴拉衰减越慢（数值见 MoonProjectConfig 的 containment 段）
+        int decayInterval = MoonProjectConfig.containmentDecayBaseTicks()
+                + platings * MoonProjectConfig.containmentDecayPlatingBonusTicks();
 
         if (entity.tickCounter >= decayInterval) {
             entity.tickCounter = 0;
@@ -253,6 +316,67 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
         if (entity.qlipothCounter <= 0) {
             entity.triggerBreach((ServerLevel) level, pos);
         }
+    }
+
+    /**
+     * 按核心身份生成对应的异想体本体。
+     *
+     * <p>白盒：<b>数据存哪</b> —— 不新增字段，身份来自 {@link #getAbnormalityId()}（核心物品自带 coreId）；
+     * <b>如何驱动</b> —— 服务端 {@code triggerBreach} 调用，生成后立即 {@code addFreshEntity}；
+     * <b>边界</b> —— 未注册的身份返回 {@code false}，由调用方回落到狂暴化身，保证任何物品都有破门表现。</p>
+     *
+     * @return 是否成功生成了真实异想体
+     */
+    private boolean spawnAbnormality(ServerLevel serverLevel, BlockPos pos, String coreId) {
+        if (coreId == null) {
+            return false;
+        }
+        if ("scorched_girl".equals(coreId)) {
+            var girl = ModEntities.SCORCHED_GIRL.get().create(serverLevel);
+            if (girl == null) {
+                return false;
+            }
+            girl.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                    serverLevel.random.nextFloat() * 360F, 0.0F);
+            girl.setCustomName(Component.literal("§4[收容失效] 焦化少女"));
+            girl.setCustomNameVisible(true);
+            // 已破门的异想体不应自然消失
+            girl.setPersistenceRequired();
+            serverLevel.addFreshEntity(girl);
+            return true;
+        }
+        return false;
+    }
+
+    /** 回落方案：核心身份未知（或玩家塞了随便什么物品）时，生成一只携带脑叶武器的狂暴化身。 */
+    private void spawnFallbackBerserker(ServerLevel serverLevel, BlockPos pos) {
+        WitherSkeleton anomalyEntity = EntityType.WITHER_SKELETON.create(serverLevel);
+        if (anomalyEntity == null) {
+            return;
+        }
+        anomalyEntity.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                serverLevel.random.nextFloat() * 360F, 0.0F);
+        anomalyEntity.setCustomName(Component.literal("§4[收容失效] 狂暴化身"));
+        anomalyEntity.setCustomNameVisible(true);
+        anomalyEntity.setPersistenceRequired();
+
+        // 增强属性：80 点高额生命值与强化伤害
+        if (anomalyEntity.getAttribute(Attributes.MAX_HEALTH) != null) {
+            anomalyEntity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(80.0D);
+            anomalyEntity.setHealth(80.0F);
+        }
+        if (anomalyEntity.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+            anomalyEntity.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(12.0D);
+        }
+        if (anomalyEntity.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
+            anomalyEntity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+        }
+
+        // 配备脑叶模组装备
+        anomalyEntity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.REGRET.get()));
+        anomalyEntity.setDropChance(EquipmentSlot.MAINHAND, 0.05F);
+
+        serverLevel.addFreshEntity(anomalyEntity);
     }
 
     /**
@@ -272,31 +396,11 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
                 pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
                 40, 0.6, 0.8, 0.6, 0.1);
 
-        // 3. 在上方生成狂暴异想体化身（拥有高血量、强力武装的狂暴实体）
-        WitherSkeleton anomalyEntity = EntityType.WITHER_SKELETON.create(serverLevel);
-        if (anomalyEntity != null) {
-            anomalyEntity.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-                    serverLevel.random.nextFloat() * 360F, 0.0F);
-            anomalyEntity.setCustomName(Component.literal("§4[收容失效] 狂暴异想体"));
-            anomalyEntity.setCustomNameVisible(true);
-
-            // 增强属性：80 点高额生命值与强化伤害
-            if (anomalyEntity.getAttribute(Attributes.MAX_HEALTH) != null) {
-                anomalyEntity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(80.0D);
-                anomalyEntity.setHealth(80.0F);
-            }
-            if (anomalyEntity.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
-                anomalyEntity.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(12.0D);
-            }
-            if (anomalyEntity.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-                anomalyEntity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-            }
-
-            // 配备脑叶模组装备
-            anomalyEntity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.REGRET.get()));
-            anomalyEntity.setDropChance(EquipmentSlot.MAINHAND, 0.05F);
-
-            serverLevel.addFreshEntity(anomalyEntity);
+        // 3. 读取核心身份（必须在清空槽位之前），按身份生成对应的异想体本体
+        String abnormalityId = this.getAbnormalityId();
+        String abnormalityName = this.getAbnormalityName();
+        if (!spawnAbnormality(serverLevel, pos, abnormalityId)) {
+            spawnFallbackBerserker(serverLevel, pos);
         }
 
         // 4. 销毁收容核心
@@ -313,7 +417,7 @@ public class ContainmentUnitBlockEntity extends BlockEntity implements MenuProvi
                 .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 2500) // 50格内
                 .forEach(p -> p.sendSystemMessage(Component.literal(
                         "§4§l[脑叶公司警报] §c收容室 (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() +
-                                ") 逆卡巴拉计数归零！异想体已突破收容！")));
+                                ") 逆卡巴拉计数归零！§e" + abnormalityName + " §c已突破收容！")));
     }
 
     @Override

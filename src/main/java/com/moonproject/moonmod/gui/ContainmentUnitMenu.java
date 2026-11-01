@@ -70,6 +70,13 @@ public class ContainmentUnitMenu extends AbstractContainerMenu {
         return this.data.get(3) != 0;
     }
 
+    /**
+     * 当前收容对象的显示名（客户端可读：槽位内容由容器同步，方块实体在双方都存在）。
+     */
+    public String getAbnormalityName() {
+        return this.blockEntity == null ? "未装载" : this.blockEntity.getAbnormalityName();
+    }
+
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == 0 && this.blockEntity != null) {
