@@ -3,6 +3,7 @@ package com.moonproject.moonmod.init;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.entity.ScorchedGirlEntity;
 import com.moonproject.moonmod.entity.SeatEntity;
+import com.moonproject.moonmod.entity.SlashScarEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -34,6 +35,17 @@ public class ModEntities {
                     .sized(0.55F, 1.0F)
                     .clientTrackingRange(8)
                     .build("scorched_girl"));
+
+    /** 刀光残留：斩击留在空气里的弧光，纯装饰、无碰撞、不存档。 */
+    public static final RegistryObject<EntityType<SlashScarEntity>> SLASH_SCAR =
+            ENTITY_TYPES.register("slash_scar", () -> EntityType.Builder
+                    .of(SlashScarEntity::new, MobCategory.MISC)
+                    .sized(0.05F, 0.05F)
+                    .noSave()
+                    .noSummon()
+                    .clientTrackingRange(10)
+                    .updateInterval(40)
+                    .build("slash_scar"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

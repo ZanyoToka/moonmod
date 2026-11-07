@@ -2,6 +2,8 @@ package com.moonproject.moonmod.blockentity;
 
 import com.moonproject.moonmod.block.IdentityExtractorBlock;
 import com.moonproject.moonmod.init.ModBlockEntities;
+import com.moonproject.moonmod.item.IdentityCardData;
+import com.moonproject.moonmod.item.IdentityCardItem;
 import com.moonproject.moonmod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,13 +14,11 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -239,58 +239,33 @@ public class IdentityExtractorBlockEntity extends BlockEntity implements net.min
     }
 
     /**
-     * 依据投入材料与原著等级体系生成人格卡/书页奖励
+     * 抽取结算：按投入材料的等级体系抽取对应等级的人格卡。
+     *
+     * <p>改造前这里生成的是「附魔书 + 自定义名字」的伪书页，物品本身不可佩戴、也不参与任何系统；
+     * 现在换成真正可佩戴的 {@code moonproject:identity_card}——人格身份写在 NBT 里，
+     * 属性由 Curios 佩戴时下发（见 {@code IdentityCardItem}）。</p>
+     *
+     * <p>概率结构沿用改造前的三档：核心/下界之星 → 000 级；碎片/紫水晶 → 00 级（1/4 升格出 E.G.O 核心）；
+     * 书籍/经验瓶 → 0 级。</p>
      */
     private ItemStack generateIdentityReward(ItemStack medium, Level level) {
-        var random = level.random;
+        RandomSource random = level.random;
 
-        // 1. 如果投入了 E.G.O 核心 或 下界之星 —— 极高概率产出 000 级极上位人格书页 / 高级装备
+        // 1. E.G.O 核心 / 下界之星 → 000 级人格（都市顶点）
         if (medium.is(ModItems.EGO_CORE.get()) || medium.is(Items.NETHER_STAR)) {
-            int roll = random.nextInt(3);
-            if (roll == 0) {
-                // 000 级人格·南部第4科科长 附魔之书
-                ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.SHARPNESS, 5));
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.UNBREAKING, 3));
-                book.setHoverName(Component.literal("§6【000级人格·南部第4科科长】共鸣书页"));
-                return book;
-            } else if (roll == 1) {
-                // 000 级人格·W公司清扫要员 附魔之书
-                ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.ALL_DAMAGE_PROTECTION, 4));
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.FALL_PROTECTION, 4));
-                book.setHoverName(Component.literal("§d【000级人格·W公司次元清扫要员】共鸣书页"));
-                return book;
-            } else {
-                // 珍贵的核心回馈：附赠大量碎片与后悔武器胚体
-                return new ItemStack(ModItems.REGRET.get());
-            }
+            return IdentityCardItem.create(IdentityCardData.randomByGrade(random, IdentityCardData.GRADE_OOO));
         }
 
-        // 2. 如果投入了异想体碎片 或 紫水晶镜面碎片 —— 产出 00 级收尾人人格书页
+        // 2. 异想体碎片 / 紫水晶镜面碎片 → 00 级人格；四分之一概率升格成 E.G.O 核心
         if (medium.is(ModItems.ABNORMALITY_FRAGMENT.get()) || medium.is(Items.AMETHYST_SHARD)) {
-            int roll = random.nextInt(3);
-            if (roll == 0) {
-                ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.MOB_LOOTING, 3));
-                book.setHoverName(Component.literal("§b【00级人格·黑云会若众】共鸣书页"));
-                return book;
-            } else if (roll == 1) {
-                ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-                EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.SWEEPING_EDGE, 3));
-                book.setHoverName(Component.literal("§a【00级人格·剑契派门徒】共鸣书页"));
-                return book;
-            } else {
-                // 偶发升格产出 E.G.O 核心！
+            if (random.nextInt(4) == 0) {
                 return new ItemStack(ModItems.EGO_CORE.get());
             }
+            return IdentityCardItem.create(IdentityCardData.randomByGrade(random, IdentityCardData.GRADE_OO));
         }
 
-        // 3. 常规书籍 / 经验瓶
-        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(Enchantments.UNBREAKING, 2));
-        book.setHoverName(Component.literal("§7【0级人格·都市流浪收尾人】残缺书页"));
-        return book;
+        // 3. 书籍 / 经验瓶 → 0 级人格（街头水准）
+        return IdentityCardItem.create(IdentityCardData.randomByGrade(random, IdentityCardData.GRADE_ZERO));
     }
 
     public void dropInventory() {

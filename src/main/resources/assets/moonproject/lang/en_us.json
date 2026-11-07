@@ -2,6 +2,7 @@
   "itemGroup.moonproject": "Project Moon",
   "item.moonproject.abnormality_fragment": "Abnormality Fragment",
   "item.moonproject.ego_core": "E.G.O Core",
+  "item.moonproject.identity_card": "Identity Card",
   "item.moonproject.regret": "E.G.O Weapon: Regret",
   "item.moonproject.ego_helmet": "E.G.O Armor Helmet",
   "item.moonproject.ego_chestplate": "E.G.O Armor Chestplate",
@@ -11,9 +12,14 @@
   "item.moonproject.alaya_vijnana.state.sheathed": "Stance: Sheathed",
   "item.moonproject.alaya_vijnana.state.drawn": "Stance: Drawn (Unleashed)",
   "item.moonproject.alaya_vijnana.remaining": "%s s of unleash left",
-  "item.moonproject.alaya_vijnana.memory": "Memory cost: -1 XP level per second while drawn",
   "item.moonproject.alaya_vijnana.memory_empty": "Your memories are gone",
-  "item.moonproject.alaya_vijnana.hint": "Right-click to switch stance | Left = Slash, sprint+Left = Smear, sneak+Left = Spill, sneak+Right = Depict | N = Heavenly Kill, M = Erase",
+    "item.moonproject.alaya_vijnana.hint": "Right-click to switch stance | Left = Slash, sprint+Left = Smear, sneak+Left = Spill, sneak+Right = Depict | Z = Heavenly Kill, X = Erase",
+    "item.moonproject.alaya_vijnana.skill.title": "-- Skill Mechanics --",
+    "item.moonproject.alaya_vijnana.skill.draw": "Right-click: unleash for %s s, burning memory (XP) the whole time; forced sheathe when memory or time runs out",
+    "item.moonproject.alaya_vijnana.skill.heavenly": "Z - Heavenly Kill: costs %s Cutbond, 5-hit combo on a target within %s blocks ahead, x2.0 per hit",
+    "item.moonproject.alaya_vijnana.skill.erase": "X - Erase Me, Erase You: costs %s Cutbond, 5-hit combo on a target within %s blocks ahead, x3.0 per hit",
+    "item.moonproject.alaya_vijnana.skill.cutbond": "Cutbond: built up by Smear/Spill hits, up to %s stacks; both skills spend it",
+    "item.moonproject.alaya_vijnana.skill.memory": "Memory burn: every %s s it costs %s XP level(s); forced sheathe when you cannot pay",
   "item.moonproject.alaya_vijnana.slash.heavy": "Heavenly Kill - burned %s Poise",
   "item.moonproject.alaya_vijnana.skill.cast.name": "%s! burned %s Poise",
   "item.moonproject.alaya_vijnana.skill.cooldown": "Skill on cooldown (%s s)",
@@ -97,5 +103,12 @@
 
   "block.moonproject.reinforced_plating": "City Reinforced Plating",
   "item.moonproject.reinforced_plating": "City Reinforced Plating",
-  "tooltip.moonproject.reinforced_plating": "Heavy reinforced plating for Lobotomy Corp facilities. Boasts extreme blast resistance; surrounding containment units significantly slows Qlipoth decay."
+  "tooltip.moonproject.reinforced_plating": "Heavy reinforced plating for Lobotomy Corp facilities. Boasts extreme blast resistance; surrounding containment units significantly slows Qlipoth decay.",
+
+  "subtitles.moonproject.alaya_draw": "Blade drawn",
+  "subtitles.moonproject.alaya_sheath": "Blade sheathed",
+  "subtitles.moonproject.alaya_slash": "Air cut",
+  "subtitles.moonproject.alaya_slash_heavy": "Heavy slash",
+  "subtitles.moonproject.alaya_erase": "Concept erased",
+  "subtitles.moonproject.alaya_memory_burn": "Memory burning"
 }

@@ -7,6 +7,7 @@ import com.moonproject.moonmod.init.ModBlockEntities;
 import com.moonproject.moonmod.init.ModBlocks;
 import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
+import com.moonproject.moonmod.init.ModParticles;
 import com.moonproject.moonmod.init.ModSounds;
 import com.moonproject.moonmod.item.ModCreativeTab;
 import com.moonproject.moonmod.item.ModItems;
@@ -47,8 +48,10 @@ public class MoonProjectMod {
         ModEffects.EFFECTS.register(modEventBus);
         // 8. 注册自然生成结构（边狱支部·迷途客车与收容站台）
         ModStructures.register(modEventBus);
-        // 9. 注册音效（武器/异想体/机器音效骨架，见 init/ModSounds）
+        // 9. 注册音效（武器/异想体/机器音效，见 init/ModSounds）
         ModSounds.SOUNDS.register(modEventBus);
+        // 10. 注册粒子类型（外观在客户端 client/particle/* 决定）
+        ModParticles.PARTICLES.register(modEventBus);
 
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);

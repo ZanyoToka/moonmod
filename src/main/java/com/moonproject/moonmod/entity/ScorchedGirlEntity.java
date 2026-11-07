@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsTargetGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -21,11 +21,13 @@ import net.minecraft.world.phys.AABB;
 /**
  * 焦化少女（TETH）：靠近玩家后点燃自己并自爆。
  *
- * <p>机制：玩家进入触发范围 → 开始引线（3 秒，身体冒火星）
- * → 引线结束自爆（默认半径 4 格，不破坏方块），自身死亡。</p>
+ * <p>机制：像苦力怕一样纯自爆——靠近玩家 → 点燃引线 → 引线结束自爆
+ * （默认半径 200 格、固定 100 伤害、破坏地形），自身死亡。<b>不做近战</b>：
+ * 没有 {@code MeleeAttackGoal}，攻击力属性也置 0。</p>
  *
  * <p>数值全部来自 {@code MoonProjectConfig} 的 {@code scorched_girl} 段：
- * {@code triggerRange} / {@code fuseTicks} / {@code explodeRadius} / {@code explodeDamage}。</p>
+ * {@code triggerRange} / {@code fuseTicks} / {@code explodeRadius} / {@code explodeDamage} / {@code griefing}。
+ * 默认值 = 原作者手调的数值（1 格 / 1 tick / 200 格 / 100 伤害 / 会炸地形）。</p>
  */
 public class ScorchedGirlEntity extends Monster {
 
@@ -50,15 +52,17 @@ public class ScorchedGirlEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 100.0D)
-                .add(Attributes.ATTACK_DAMAGE, 4.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.08D)
+                // 纯自爆单位：不挥刀，伤害全部来自爆炸
+                .add(Attributes.ATTACK_DAMAGE, 0.0D)
+                .add(Attributes.MOVEMENT_SPEED, MoonProjectConfig.scorchedGirlMoveSpeed())
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
+        // 苦力怕式：没有 MeleeAttackGoal（不会挥刀），只负责靠过去送炸
+        this.goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, 1.0D, 32.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -168,7 +172,7 @@ public class ScorchedGirlEntity extends Monster {
         this.playSound(SoundEvents.TNT_PRIMED, 1.0F, 1.2F);
     }
 
-    /** 自爆：不破坏方块，伤害范围内所有生物。 */
+    /** 自爆：伤害范围内所有生物（是否破坏方块由 {@code scorched_girl.griefing} 决定）。 */
     private void explode() {
         if (!(this.level() instanceof ServerLevel server)) {
             return;
@@ -180,11 +184,12 @@ public class ScorchedGirlEntity extends Monster {
                 return;
             }
         }
-        // 不破坏方块：ExplosionInteraction.NONE，只造成伤害与击退
         float radius = (float) MoonProjectConfig.scorchedGirlExplodeRadius();
         float bonusDamage = (float) MoonProjectConfig.scorchedGirlExplodeDamage();
-        server.explode(this, this.getX(), this.getY() + 0.5D, this.getZ(),
-                radius, Level.ExplosionInteraction.NONE);
+        Level.ExplosionInteraction interaction = MoonProjectConfig.scorchedGirlGriefing()
+                ? Level.ExplosionInteraction.MOB
+                : Level.ExplosionInteraction.NONE;
+        server.explode(this, this.getX(), this.getY() + 0.5D, this.getZ(), radius, interaction);
         // 额外补一次固定伤害，保证数值可控（不受爆炸衰减影响）
         AABB box = this.getBoundingBox().inflate(radius);
         for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class, box)) {

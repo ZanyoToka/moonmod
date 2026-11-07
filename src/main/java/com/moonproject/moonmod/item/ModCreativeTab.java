@@ -28,6 +28,10 @@ public class ModCreativeTab {
                         output.accept(ModItems.ABNORMALITY_CORE.get());
                         output.accept(ModItems.FINAL_MATCH.get());
                         output.accept(ModItems.FINAL_MATCH_LIGHT.get());
+                        // 人格卡：等级各展示一张，具体身份由 NBT 决定（见 IdentityCardData）
+                        output.accept(IdentityCardItem.create("urban_fixer"));
+                        output.accept(IdentityCardItem.create("liu_association"));
+                        output.accept(IdentityCardItem.create("south4_manager"));
                         output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.SCORCHED_GIRL_SPAWN_EGG.get());
                         output.accept(ModItems.REGRET.get());

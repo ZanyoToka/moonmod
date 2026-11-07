@@ -1,0 +1,62 @@
+{
+  "alaya_draw": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_draw",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_draw",
+        "stream": false
+      }
+    ]
+  },
+  "alaya_sheath": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_sheath",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_sheath",
+        "stream": false
+      }
+    ]
+  },
+  "alaya_slash": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_slash",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_slash",
+        "stream": false
+      }
+    ]
+  },
+  "alaya_slash_heavy": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_slash_heavy",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_slash_heavy",
+        "stream": false
+      }
+    ]
+  },
+  "alaya_erase": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_erase",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_erase",
+        "stream": false
+      }
+    ]
+  },
+  "alaya_memory_burn": {
+    "category": "player",
+    "subtitle": "subtitles.moonproject.alaya_memory_burn",
+    "sounds": [
+      {
+        "name": "moonproject:alaya_memory_burn",
+        "stream": false
+      }
+    ]
+  }
+}

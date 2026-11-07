@@ -3,9 +3,15 @@ package com.moonproject.moonmod.event;
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.effect.ModEffects;
+import com.moonproject.moonmod.entity.SlashScarEntity;
+import com.moonproject.moonmod.init.ModParticles;
+import com.moonproject.moonmod.init.ModSounds;
+import com.moonproject.moonmod.item.ModItems;
 import com.moonproject.moonmod.sanity.Sanity;
 import com.moonproject.moonmod.item.AlayaVijnanaItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffect;
@@ -23,6 +29,8 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 阿赖耶识的战斗机制。状态按原著，斩击<b>延迟生效</b>。
@@ -36,6 +44,8 @@ import net.minecraftforge.fml.common.Mod;
  */
 @Mod.EventBusSubscriber(modid = MoonProjectMod.MODID)
 public final class CombatEvents {
+    private static final Logger LOG = LoggerFactory.getLogger("moonproject-skill");
+
     /** 禁疗截止时间（游戏刻）。 */
     public static final String NO_HEAL_UNTIL = "MoonNoHealUntil";
     /** 递归保护：结算类伤害会再次触发命中事件。 */
@@ -173,6 +183,75 @@ public final class CombatEvents {
         scheduleSkill(player, target, skill, base);
         tryLunge(player, target, stack);
         scheduleSweep(player, target, base * (float) skill.ratio, skill.heavy);
+        playSlashEffects(player, target, skill);
+    }
+
+    /**
+     * 命中表现：破空声 + 落点崩落的焦黑碎屑。
+     *
+     * <p>在服务端调用，{@code playSound} 与 {@code sendParticles} 都会同步给附近玩家。
+     * 是否重击由技能决定（天杀 / 抹去 / 描绘用低沉版）。</p>
+     */
+    private static void playSlashEffects(Player player, LivingEntity target, Skill skill) {
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        boolean heavy = skill.heavy;
+        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                (heavy ? ModSounds.ALAYA_SLASH_HEAVY : ModSounds.ALAYA_SLASH).get(),
+                SoundSource.PLAYERS, heavy ? 1.0F : 0.8F,
+                0.9F + player.getRandom().nextFloat() * 0.2F);
+        serverLevel.sendParticles(ModParticles.BLACK_SLASH.get(),
+                target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                heavy ? 26 : 16, 0.3D, 0.35D, 0.3D, 0.08D);
+        // 刀光留在原地：开刃状态下斩击会留下一道持续 30 秒的弧光（时长/大小见 Config effects 段）
+        spawnSlashScar(serverLevel, player, target, heavy ? 1.4F : 1.0F, 0);
+    }
+
+    /**
+     * 在世界里留下一条刀光残留。
+     *
+     * <p>位置取目标半高处、沿玩家视线回退 0.45 格——正好是在「刀刃扫过的那一层」，
+     * 而不是嵌进目标模型内部。旋转角随机，避免同一位置连续斩击叠出完全相同的图案。</p>
+     */
+    private static void spawnSlashScar(ServerLevel level, Player player, LivingEntity target,
+                                       float scaleMultiplier, int variant) {
+        Vec3 look = player.getLookAngle();
+        double x = target.getX() - look.x * 0.45D;
+        double y = target.getY() + target.getBbHeight() * 0.55D;
+        double z = target.getZ() - look.z * 0.45D;
+        float scale = (float) MoonProjectConfig.slashScarScale() * scaleMultiplier;
+        float roll = (player.getRandom().nextFloat() - 0.5F) * 70.0F;
+        SlashScarEntity.spawn(level, x, y, z, roll, scale, variant);
+    }
+
+    /**
+     * 一次技能洒下一整把白刃弧光（很多条），全部与原版残留一样 30 秒后消失。
+     *
+     * <p>散布在以目标为中心的椭球内（水平 ±1.5 格、竖直 ±1.1 格），每道弧的旋转角在
+     * 0..360° 内随机——这样看上去是被乱刀切开，而不是整齐的一圈。
+     * 数量来自 {@code effects.slashScarHeavenlyCount} / {@code effects.slashScarEraseCount}。</p>
+     */
+    private static void spawnSlashScarBurst(ServerLevel level, Player player, LivingEntity target,
+                                           int count, int variant, float scaleMultiplier) {
+        if (count <= 0) {
+            return;
+        }
+        Vec3 look = player.getLookAngle();
+        double baseX = target.getX() - look.x * 0.45D;
+        double baseY = target.getY() + target.getBbHeight() * 0.55D;
+        double baseZ = target.getZ() - look.z * 0.45D;
+        float baseScale = (float) MoonProjectConfig.slashScarScale() * scaleMultiplier;
+        var random = player.getRandom();
+        for (int i = 0; i < count; i++) {
+            double ox = (random.nextDouble() - 0.5D) * 3.0D;
+            double oy = (random.nextDouble() - 0.5D) * 2.2D;
+            double oz = (random.nextDouble() - 0.5D) * 3.0D;
+            // 大小有起伏，避免所有弧一模一样
+            float scale = baseScale * (0.45F + random.nextFloat() * 0.75F);
+            float roll = random.nextFloat() * 360.0F;
+            SlashScarEntity.spawn(level, baseX + ox, baseY + oy, baseZ + oz, roll, scale, variant);
+        }
     }
 
     /** 按技能把伤害拆成「硬币数」段，错开 2 tick 依次落地。 */
@@ -446,6 +525,7 @@ public final class CombatEvents {
         Skill skill = Skill.DEPICT;
         float base = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         scheduleSkill(player, target, skill, base);
+        playSlashEffects(player, target, skill);
         tag.putInt(AlayaVijnanaItem.TAG_SKILL_COOLDOWN, MoonProjectConfig.skill3CooldownTicks());
         return true;
     }
@@ -456,14 +536,26 @@ public final class CombatEvents {
      */
     public static void castUltimateByKey(Player player, int skill) {
         ItemStack stack = player.getMainHandItem();
-        if (!AlayaVijnanaItem.isDrawnBlade(stack)) {
+        boolean erase = skill == 1;
+        String skillName = erase ? "抹去" : "天杀";
+        LOG.info("[skill] cast request: {} by {}, inHand={}", skillName, player.getName().getString(),
+                stack.getItem());
+        if (!stack.is(ModItems.ALAYA_VIJNANA.get())) {
+            LOG.info("[skill] rejected: not holding alaya_vijnana (inHand={})", stack.getItem());
+            player.displayClientMessage(Component.literal("§7[" + skillName + "] 需要手持阿赖耶识"), true);
             return;
         }
-        boolean erase = skill == 1;
+        if (!AlayaVijnanaItem.isDrawnBlade(stack)) {
+            LOG.info("[skill] rejected: blade not drawn");
+            player.displayClientMessage(Component.literal("§7[" + skillName + "] 阿赖耶识尚未出鞘（右键出鞘）"), true);
+            return;
+        }
         int cost = erase ? MoonProjectConfig.eraseCutbondCost() : MoonProjectConfig.heavenlyKillCutbondCost();
-        if (stackCount(player, ModEffects.CUTBOND.get()) < cost) {
-            player.displayClientMessage(Component.translatable(
-                    "item.moonproject.alaya_vijnana.skill.not_enough", cost), true);
+        int have = stackCount(player, ModEffects.CUTBOND.get());
+        if (have < cost) {
+            LOG.info("[skill] rejected: cutbond {} < {}", have, cost);
+            player.displayClientMessage(Component.literal("§7[" + skillName + "] 斩缚不足：需要 "
+                    + cost + " 层，当前 " + have + " 层"), true);
             return;
         }
         LivingEntity target = findTarget(player, MoonProjectConfig.skill3Range());
@@ -472,10 +564,34 @@ public final class CombatEvents {
                     Component.translatable("item.moonproject.alaya_vijnana.skill.no_target"), true);
             return;
         }
+        LOG.info("[skill] executing {} on {} (cutbond {} -> {})", skillName, target.getName().getString(), have, have - cost);
         takeCutbond(player, cost);
         Skill chosen = erase ? Skill.ERASE : Skill.HEAVENLY_KILL;
         float base = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         scheduleSkill(player, target, chosen, base);
+        playUltimateEffects(player, target, erase);
+    }
+
+    /** 两个大招的表现：抹去用冷白碎片 + 上升失真，天杀用重斩音 + 深色碎屑。 */
+    private static void playUltimateEffects(Player player, LivingEntity target, boolean erase) {
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (erase) {
+            serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    ModSounds.ALAYA_ERASE.get(), SoundSource.PLAYERS, 1.2F, 1.0F);
+            serverLevel.sendParticles(ModParticles.CONCEPT_SHARD.get(),
+                    target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                    56, 0.45D, 0.55D, 0.45D, 0.18D);
+            spawnSlashScarBurst(serverLevel, player, target, MoonProjectConfig.slashScarEraseCount(), 1, 1.15F);
+        } else {
+            serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    ModSounds.ALAYA_SLASH_HEAVY.get(), SoundSource.PLAYERS, 1.2F, 0.8F);
+            serverLevel.sendParticles(ModParticles.BLACK_SLASH.get(),
+                    target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                    34, 0.4D, 0.5D, 0.4D, 0.14D);
+            spawnSlashScarBurst(serverLevel, player, target, MoonProjectConfig.slashScarHeavenlyCount(), 0, 1.05F);
+        }
     }
 
     /** 在正前方约 60° 的锥形内，寻找最近的敌对生物。 */

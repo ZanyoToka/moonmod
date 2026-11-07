@@ -78,6 +78,14 @@ public class ModItems {
     public static final RegistryObject<Item> FINAL_MATCH_LIGHT = ITEMS.register("final_match_light",
             () -> new AbnormalityTrinketItem("scorched_girl", "head", new Item.Properties().stacksTo(1)));
 
+    /**
+     * 人格卡：人格抽取共鸣舱的产物，可佩戴在 Curios 手部槽。
+     * <p>具体人格（名称 / 等级 / 属性）存在 NBT，见 {@link IdentityCardData}——
+     * 加新人格不需要新增物品、模型或贴图。</p>
+     */
+    public static final RegistryObject<Item> IDENTITY_CARD = ITEMS.register("identity_card",
+            () -> new IdentityCardItem(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> ENKEPHALIN = ITEMS.register("enkephalin",
             () -> new Item(new Item.Properties()));
 

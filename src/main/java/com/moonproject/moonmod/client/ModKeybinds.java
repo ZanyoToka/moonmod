@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * 专属技能键（客户端）：N = 天杀，M = 将我抹去，也将你抹去。
- * R 留给 Epic Fight 的战斗模式切换。
+ * 专属技能键（客户端）：Z = 天杀，X = 将我抹去，也将你抹去。
+ * R 留给 Epic Fight 的战斗模式切换；J 是饰品栏（见 TrinketKeybinds）。
  */
 @Mod.EventBusSubscriber(modid = MoonProjectMod.MODID,
         bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -19,9 +19,9 @@ public final class ModKeybinds {
     public static final String CATEGORY = "key.categories.moonproject";
 
     public static final KeyMapping HEAVENLY_KILL = new KeyMapping(
-            "key.moonproject.heavenly_kill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY);
+            "key.moonproject.heavenly_kill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, CATEGORY);
     public static final KeyMapping ERASE = new KeyMapping(
-            "key.moonproject.erase", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, CATEGORY);
+            "key.moonproject.erase", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_X, CATEGORY);
 
     @SubscribeEvent
     public static void onRegisterKeys(RegisterKeyMappingsEvent event) {

@@ -2,9 +2,13 @@ package com.moonproject.moonmod.item;
 
 import com.moonproject.moonmod.config.MoonProjectConfig;
 import com.moonproject.moonmod.event.CombatEvents;
+import com.moonproject.moonmod.init.ModParticles;
+import com.moonproject.moonmod.init.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +31,8 @@ import java.util.List;
  * 形态决定的面板伤害与攻速由 {@code AlayaAttributeHandler} 通过
  * {@code ItemAttributeModifierEvent} 按 NBT 动态下发，所以数值全部来自 Config。</p>
  *
- * <p>尚未实现（见设计规格书第 7.4 节）：记忆代价、焦黑斩痕、概念抹除、粒子音效。</p>
+ * <p>步骤 3（设计规格书 4.5）已落地：出鞘/归鞘音效、记忆灼烧的爆裂声与余烬、命中与
+ * 大招的破空声和碎屑，见 {@link #playSwitchEffects} 与 {@code CombatEvents#playSlashEffects}。</p>
  */
 public class AlayaVijnanaItem extends SwordItem {
     /** 是否处于解放态。 */
@@ -105,8 +110,41 @@ public class AlayaVijnanaItem extends SwordItem {
         }
         stack.getOrCreateTag().putInt(TAG_COOLDOWN, MoonProjectConfig.switchCooldownTicks());
 
-        // 粒子与音效在步骤 3 补上（设计规格书 4.5）。
+        // 步骤 3（设计规格书 4.5）：形态切换的音效与粒子。
+        // 只在服务端触发，playSound / sendParticles 会由服务端同步给附近客户端；
+        // 若在客户端也播一次，单机会听到两遍。
+        if (!level.isClientSide) {
+            playSwitchEffects(level, player, isDrawn(stack));
+        }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    /**
+     * 拔刀 / 收刀的表现层：一声金属音 + （拔刀时）一圈向上的记忆余烬。
+     *
+     * <p>粒子用 {@code sendParticles} 广播，不写入存档，纯表现。</p>
+     */
+    private static void playSwitchEffects(Level level, Player player, boolean drawn) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                drawn ? ModSounds.ALAYA_DRAW.get() : ModSounds.ALAYA_SHEATH.get(),
+                SoundSource.PLAYERS, 1.0F, drawn ? 1.0F : 0.95F);
+
+        if (!drawn) {
+            return;
+        }
+        // 一圈余烬从脚边升起，表示「记忆开始被烧」这件事已经开始了
+        final int count = 24;
+        for (int i = 0; i < count; i++) {
+            double angle = i * (Math.PI * 2.0D / count);
+            double px = player.getX() + Math.cos(angle) * 0.65D;
+            double pz = player.getZ() + Math.sin(angle) * 0.65D;
+            double py = player.getY() + 0.2D + player.getRandom().nextDouble() * 0.7D;
+            serverLevel.sendParticles(ModParticles.MEMORY_EMBER.get(), px, py, pz, 1,
+                    Math.cos(angle) * 0.03D, 0.07D, Math.sin(angle) * 0.03D, 0.0D);
+        }
     }
 
     @Override
@@ -144,11 +182,25 @@ public class AlayaVijnanaItem extends SwordItem {
         int burnInterval = Math.max(1, MoonProjectConfig.memoryBurnIntervalTicks());
         if (burnTimer >= burnInterval) {
             burnTimer = 0;
-            if (entity instanceof Player player && !burnMemory(player)) {
-                // 记忆被斩空了 → 强制收回鞘中（连"想拔刀"这件事都记不起来）
-                setSheathed(stack);
-                tag.putInt(TAG_MEMORY_TIMER, 0);
-                return;
+            if (entity instanceof Player player) {
+                if (!burnMemory(player)) {
+                    // 记忆被斩空了 → 强制收回鞘中（连"想拔刀"这件事都记不起来）
+                    setSheathed(stack);
+                    tag.putInt(TAG_MEMORY_TIMER, 0);
+                    if (level instanceof ServerLevel serverLevel) {
+                        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                ModSounds.ALAYA_SHEATH.get(), SoundSource.PLAYERS, 0.8F, 0.85F);
+                    }
+                    return;
+                }
+                // 每烧掉一截记忆：细碎爆裂声 + 几点余烬，提示"代价还在付"
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            ModSounds.ALAYA_MEMORY_BURN.get(), SoundSource.PLAYERS, 0.55F, 1.0F);
+                    serverLevel.sendParticles(ModParticles.MEMORY_EMBER.get(),
+                            player.getX(), player.getY() + 1.0D, player.getZ(), 4,
+                            0.28D, 0.4D, 0.28D, 0.01D);
+                }
             }
         }
         tag.putInt(TAG_MEMORY_TIMER, burnTimer);
@@ -157,6 +209,10 @@ public class AlayaVijnanaItem extends SwordItem {
         int left = tag.getInt(TAG_DRAW_TICKS) - 1;
         if (left <= 0) {
             setSheathed(stack);
+            if (entity instanceof Player player && level instanceof ServerLevel serverLevel) {
+                serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        ModSounds.ALAYA_SHEATH.get(), SoundSource.PLAYERS, 0.7F, 0.8F);
+            }
         } else {
             tag.putInt(TAG_DRAW_TICKS, left);
         }
@@ -215,8 +271,6 @@ public class AlayaVijnanaItem extends SwordItem {
             int seconds = tag == null ? 0 : Math.max(0, tag.getInt(TAG_DRAW_TICKS) / 20);
             tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.remaining", seconds)
                     .withStyle(ChatFormatting.AQUA));
-            tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.memory")
-                    .withStyle(ChatFormatting.RED));
 
             int skillCooldown = tag == null ? 0 : tag.getInt(TAG_SKILL_COOLDOWN);
             if (skillCooldown > 0) {
@@ -227,6 +281,28 @@ public class AlayaVijnanaItem extends SwordItem {
                         .withStyle(ChatFormatting.GOLD));
             }
         }
+
+        // 技能机制：把「怎么出鞘、技能吃什么资源、代价是什么」直接写在简介里，
+        // 数值全部读 Config，改配置后简介会自动跟着变。
+        tooltip.add(Component.empty());
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.title")
+                .withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.draw",
+                        MoonProjectConfig.drawDurationTicks() / 20)
+                .withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.heavenly",
+                        MoonProjectConfig.heavenlyKillCutbondCost(), (int) MoonProjectConfig.skill3Range())
+                .withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.erase",
+                        MoonProjectConfig.eraseCutbondCost(), (int) MoonProjectConfig.skill3Range())
+                .withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.cutbond",
+                        MoonProjectConfig.cutbondMaxStacks())
+                .withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.skill.memory",
+                        MoonProjectConfig.memoryBurnIntervalTicks() / 20,
+                        MoonProjectConfig.memoryCostPerBurn())
+                .withStyle(ChatFormatting.DARK_GRAY));
 
         tooltip.add(Component.translatable("item.moonproject.alaya_vijnana.hint")
                 .withStyle(ChatFormatting.DARK_GRAY));

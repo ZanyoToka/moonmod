@@ -130,8 +130,26 @@ public final class MoonProjectConfig {
     public static final ForgeConfigSpec.IntValue SCORCHED_GIRL_FUSE_TICKS;
     /** 触发引线的距离（格）。 */
     public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_TRIGGER_RANGE;
+    /** 自爆是否破坏地形。 */
+    public static final ForgeConfigSpec.BooleanValue SCORCHED_GIRL_GRIEFING;
     /** 自爆后掉落异想体核心的概率。 */
     public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_CORE_DROP_CHANCE;
+    /** 移动速度属性（默认 0.07，比玩家步行慢，追不上跑动中的玩家）。 */
+    public static final ForgeConfigSpec.DoubleValue SCORCHED_GIRL_MOVE_SPEED;
+    // ===== 特效（纯表现，不影响战斗数值）=====
+    /** 刀光残留在世界里的时长（tick，默认 600 = 30 秒）。 */
+    public static final ForgeConfigSpec.IntValue SLASH_SCAR_LIFETIME_TICKS;
+    /** 刀光残留的宽度（格）。 */
+    public static final ForgeConfigSpec.DoubleValue SLASH_SCAR_SCALE;
+    /** 天杀一次生成的刀光残留条数。 */
+    public static final ForgeConfigSpec.IntValue SLASH_SCAR_HEAVENLY_COUNT;
+    /** 将我抹去一次生成的刀光残留条数。 */
+    public static final ForgeConfigSpec.IntValue SLASH_SCAR_ERASE_COUNT;
+
+    /** 人格卡属性效果的全局倍率（人格抽取舱产物）。 */
+    public static final ForgeConfigSpec.DoubleValue IDENTITY_CARD_POWER_SCALE;
+    /** 人格卡属性倍率的默认值与兜底值。 */
+    public static final double DEFAULT_IDENTITY_CARD_POWER_SCALE = 1.0D;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -343,22 +361,52 @@ public final class MoonProjectConfig {
                 .defineInRange("suppressSanityCost", 10, 0, 45);
         builder.pop();
 
-        builder.comment("焦化少女（TETH）：自爆异想体的数值").push("scorched_girl");
+        builder.comment("焦化少女（TETH）：自爆异想体的数值（默认值即原始手调值：1 格内点燃、1 tick 引线、200 格半径、100 伤害）").push("scorched_girl");
         SCORCHED_GIRL_EXPLODE_RADIUS = builder
-                .comment("自爆半径（格，默认 4.0；不会破坏方块）")
-                .defineInRange("explodeRadius", 4.0D, 0.0D, 16.0D);
+                .comment("自爆半径（格，默认 200.0）")
+                .defineInRange("explodeRadius", 200.0D, 0.0D, 300.0D);
         SCORCHED_GIRL_EXPLODE_DAMAGE = builder
-                .comment("自爆对范围内生物追加的固定伤害（默认 30）")
-                .defineInRange("explodeDamage", 30.0D, 0.0D, 200.0D);
+                .comment("自爆对范围内生物追加的固定伤害（默认 100；0 表示不追加）")
+                .defineInRange("explodeDamage", 100.0D, 0.0D, 1000.0D);
         SCORCHED_GIRL_FUSE_TICKS = builder
-                .comment("点燃后的引线时长（tick，默认 60 = 3 秒）")
-                .defineInRange("fuseTicks", 60, 1, 600);
+                .comment("点燃后的引线时长（tick，默认 1 = 几乎立即自爆）")
+                .defineInRange("fuseTicks", 1, 1, 600);
         SCORCHED_GIRL_TRIGGER_RANGE = builder
-                .comment("玩家进入多少格内会点燃引线（默认 3.0）")
-                .defineInRange("triggerRange", 3.0D, 0.5D, 32.0D);
+                .comment("玩家进入多少格内会点燃引线（默认 1.0）")
+                .defineInRange("triggerRange", 1.0D, 0.5D, 32.0D);
+        SCORCHED_GIRL_GRIEFING = builder
+                .comment("自爆是否破坏地形（默认 true，与原设定一致）",
+                        "注意：半径 200 + 破坏地形会瞬间清空大片区域并让服务端卡死，调大半径测试时建议先关掉")
+                .define("griefing", true);
         SCORCHED_GIRL_CORE_DROP_CHANCE = builder
                 .comment("自爆后掉落异想体核心的概率（默认 0.35；0 表示不掉落）")
                 .defineInRange("coreDropChance", 0.35D, 0.0D, 1.0D);
+        SCORCHED_GIRL_MOVE_SPEED = builder
+                .comment("移动速度属性（默认 0.07，约 3.0 格/秒；玩家步行 0.1≈4.3、冲刺≈5.6，所以它追不上跑动中的玩家）")
+                .defineInRange("moveSpeed", 0.07D, 0.01D, 0.5D);
+        builder.pop();
+
+        builder.comment("特效：刀光残留等纯表现参数，不影响任何战斗数值").push("effects");
+        SLASH_SCAR_LIFETIME_TICKS = builder
+                .comment("开刃后刀光残留在原地的时长（tick，默认 600 = 30 秒）")
+                .defineInRange("slashScarLifetimeTicks", 600, 20, 6000);
+        SLASH_SCAR_SCALE = builder
+                .comment("刀光残留的宽度（格，默认 3.2；重斩会再放大 1.4 倍）")
+                .defineInRange("slashScarScale", 3.2D, 0.5D, 12.0D);
+        SLASH_SCAR_HEAVENLY_COUNT = builder
+                .comment("天杀（Z）一次斩出的白刃残留条数（默认 28；0 = 不生成）",
+                        "调太高会瞬间生成大量实体，连放技能可能卡顿")
+                .defineInRange("slashScarHeavenlyCount", 28, 0, 200);
+        SLASH_SCAR_ERASE_COUNT = builder
+                .comment("将我抹去（X）一次斩出的白刃残留条数（默认 36；0 = 不生成）")
+                .defineInRange("slashScarEraseCount", 36, 0, 200);
+        builder.pop();
+
+        builder.comment("人格卡（人格抽取共鸣舱的产物）：佩戴在 Curios 手部槽的饰品",
+                        "卡面写的是基础值，实际生效 = 基础值 × cardPowerScale").push("identity");
+        IDENTITY_CARD_POWER_SCALE = builder
+                .comment("人格卡属性效果的全局倍率（默认 1.0；0 = 只保留外观与描述，不给任何属性）")
+                .defineInRange("cardPowerScale", DEFAULT_IDENTITY_CARD_POWER_SCALE, 0.0D, 5.0D);
         builder.pop();
 
         SPEC = builder.build();
@@ -621,22 +669,52 @@ public final class MoonProjectConfig {
 
     // ===== 焦化少女 =====
     public static double scorchedGirlExplodeRadius() {
-        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_RADIUS.get() : 4.0D;
+        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_RADIUS.get() : 200.0D;
     }
 
     public static double scorchedGirlExplodeDamage() {
-        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_DAMAGE.get() : 30.0D;
+        return SPEC.isLoaded() ? SCORCHED_GIRL_EXPLODE_DAMAGE.get() : 100.0D;
     }
 
     public static int scorchedGirlFuseTicks() {
-        return SPEC.isLoaded() ? SCORCHED_GIRL_FUSE_TICKS.get() : 60;
+        return SPEC.isLoaded() ? SCORCHED_GIRL_FUSE_TICKS.get() : 1;
     }
 
     public static double scorchedGirlTriggerRange() {
-        return SPEC.isLoaded() ? SCORCHED_GIRL_TRIGGER_RANGE.get() : 3.0D;
+        return SPEC.isLoaded() ? SCORCHED_GIRL_TRIGGER_RANGE.get() : 1.0D;
+    }
+
+    public static boolean scorchedGirlGriefing() {
+        return !SPEC.isLoaded() || SCORCHED_GIRL_GRIEFING.get();
     }
 
     public static double scorchedGirlCoreDropChance() {
         return SPEC.isLoaded() ? SCORCHED_GIRL_CORE_DROP_CHANCE.get() : 0.35D;
+    }
+
+    public static double scorchedGirlMoveSpeed() {
+        return SPEC.isLoaded() ? SCORCHED_GIRL_MOVE_SPEED.get() : 0.07D;
+    }
+
+    // ===== 特效 =====
+    public static int slashScarLifetimeTicks() {
+        return SPEC.isLoaded() ? SLASH_SCAR_LIFETIME_TICKS.get() : 600;
+    }
+
+    public static double slashScarScale() {
+        return SPEC.isLoaded() ? SLASH_SCAR_SCALE.get() : 3.2D;
+    }
+
+    public static int slashScarHeavenlyCount() {
+        return SPEC.isLoaded() ? SLASH_SCAR_HEAVENLY_COUNT.get() : 28;
+    }
+
+    public static int slashScarEraseCount() {
+        return SPEC.isLoaded() ? SLASH_SCAR_ERASE_COUNT.get() : 36;
+    }
+
+    // ===== 人格卡 =====
+    public static double identityCardPowerScale() {
+        return SPEC.isLoaded() ? IDENTITY_CARD_POWER_SCALE.get() : DEFAULT_IDENTITY_CARD_POWER_SCALE;
     }
 }
