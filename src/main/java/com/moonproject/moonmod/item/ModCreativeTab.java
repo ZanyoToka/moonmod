@@ -31,6 +31,7 @@ public class ModCreativeTab {
                         output.accept(ModItems.ENKEPHALIN.get());
                         output.accept(ModItems.REGRET.get());
                         output.accept(ModItems.ALAYA_VIJNANA.get());
+                        output.accept(ModItems.DEEPSEEK_SPAWN_EGG.get());
                         output.accept(ModItems.EGO_HELMET.get());
                         output.accept(ModItems.EGO_CHESTPLATE.get());
                         output.accept(ModItems.EGO_LEGGINGS.get());

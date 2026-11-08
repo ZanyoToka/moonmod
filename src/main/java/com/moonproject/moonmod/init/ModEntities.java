@@ -35,6 +35,14 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .build("scorched_girl"));
 
+    /** 假人玩家（DeepSeek 大肥鱼）。 */
+    public static final RegistryObject<EntityType<com.moonproject.moonmod.entity.AiPlayerNpcEntity>> AI_PLAYER_NPC =
+            ENTITY_TYPES.register("ai_player_npc", () -> EntityType.Builder
+                    .<com.moonproject.moonmod.entity.AiPlayerNpcEntity>of(com.moonproject.moonmod.entity.AiPlayerNpcEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F)
+                    .clientTrackingRange(10)
+                    .build("ai_player_npc"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

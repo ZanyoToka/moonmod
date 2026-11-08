@@ -2,6 +2,7 @@ package com.moonproject.moonmod.client;
 
 import com.moonproject.moonmod.MoonProjectMod;
 import com.moonproject.moonmod.client.gui.*;
+import com.moonproject.moonmod.client.renderer.AiPlayerNpcRenderer;
 import com.moonproject.moonmod.client.renderer.ScorchedGirlRenderer;
 import com.moonproject.moonmod.init.ModEntities;
 import com.moonproject.moonmod.init.ModMenus;
@@ -29,7 +30,10 @@ public class ClientModEvents {
             MenuScreens.register(ModMenus.GOLDEN_BOUGH_SHRINE_MENU.get(), GoldenBoughShrineScreen::new);
             MenuScreens.register(ModMenus.REINFORCED_PLATING_MENU.get(), ReinforcedPlatingScreen::new);
             MenuScreens.register(ModMenus.RESONANCE_COLLECTOR_MENU.get(), ResonanceCollectorScreen::new);
-            // Trinket 界面由 Curios API 原生界面承载
+            MenuScreens.register(ModMenus.NPC_INVENTORY_MENU.get(), NpcInventoryScreen::new);
+
+            // 扫描并预加载 npc_packs 外部基岩版模型与贴图资源包
+            com.moonproject.moonmod.client.bedrock.BedrockPackManager.reload();
         });
     }
 
@@ -37,5 +41,6 @@ public class ClientModEvents {
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.SEAT.get(), SeatRenderer::new);
         event.registerEntityRenderer(ModEntities.SCORCHED_GIRL.get(), ScorchedGirlRenderer::new);
+        event.registerEntityRenderer(ModEntities.AI_PLAYER_NPC.get(), AiPlayerNpcRenderer::new);
     }
 }

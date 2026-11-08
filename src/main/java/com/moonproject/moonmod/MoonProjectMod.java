@@ -52,6 +52,8 @@ public class MoonProjectMod {
 
         // 数值配置（所有平衡数值集中在这里，见总纲第 7 节）
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MoonProjectConfig.SPEC);
+        // AI NPC 具身对话系统配置
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, com.moonproject.moonmod.ai.npc.config.AiNpcConfig.SPEC, "moonproject-ainpc.toml");
 
         modEventBus.addListener(this::commonSetup);
 
@@ -64,5 +66,8 @@ public class MoonProjectMod {
                     (com.moonproject.moonmod.item.AbnormalityCoreItem) ModItems.FINAL_MATCH.get(),
                     (com.moonproject.moonmod.item.AbnormalityTrinketItem) ModItems.FINAL_MATCH_LIGHT.get());
         });
+
+        // 异步检测并自启动 AI NPC 中间件服务（零阻塞游戏启动流程）
+        com.moonproject.moonmod.ai.npc.network.ServiceProcessManager.startServiceAsync();
     }
 }

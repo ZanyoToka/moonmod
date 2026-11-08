@@ -1,11 +1,9 @@
 package com.moonproject.moonmod.init;
 
 import com.moonproject.moonmod.MoonProjectMod;
+import com.moonproject.moonmod.ai.npc.inventory.NpcInventoryMenu;
 import com.moonproject.moonmod.gui.*;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.SimpleContainer;
-
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -60,10 +58,9 @@ public class ModMenus {
     public static final RegistryObject<MenuType<ReinforcedPlatingMenu>> REINFORCED_PLATING_MENU =
             MENUS.register("reinforced_plating_menu", () -> IForgeMenuType.create(ReinforcedPlatingMenu::new));
 
-
-
-
-
+    // 11. AI NPC 随身行囊与管理界面 (Maid-style Inventory Menu)
+    public static final RegistryObject<MenuType<NpcInventoryMenu>> NPC_INVENTORY_MENU =
+            MENUS.register("npc_inventory_menu", () -> IForgeMenuType.create(NpcInventoryMenu::new));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

@@ -6,13 +6,14 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-/** 把所有异想体的属性注册到游戏里（必须有这一步，否则召唤出来没有血量）。 */
+/** 把所有实体的属性注册到游戏里（必须有这一步，否则召唤出来没有血量）。 */
 @Mod.EventBusSubscriber(modid = MoonProjectMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModEntityAttributes {
 
     @SubscribeEvent
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(ModEntities.SCORCHED_GIRL.get(), ScorchedGirlEntity.createAttributes().build());
+        event.put(ModEntities.AI_PLAYER_NPC.get(), AiPlayerNpcEntity.createAttributes().build());
     }
 
     private ModEntityAttributes() {

@@ -32,7 +32,6 @@
   "key.categories.moonproject": "Project Moon",
   "key.moonproject.heavenly_kill": "Heavenly Kill (skill)",
   "key.moonproject.erase": "Erase Me, Erase You (skill)",
-
   "block.moonproject.exp_burner": "Book Burner Furnace",
   "item.moonproject.exp_burner": "Book Burner Furnace",
   "container.moonproject.exp_burner": "Book Burner Furnace",
@@ -45,53 +44,45 @@
   "gui.moonproject.exp_burner.fuel_title": "[Book & Fuel Chamber]",
   "gui.moonproject.exp_burner.fuel_desc1": "Accepts books, enchanted books, and written books",
   "gui.moonproject.exp_burner.fuel_desc2": "Also supports coal, lava, and standard fuels",
-
   "block.moonproject.mephistopheles_seat": "Mephistopheles Passenger Seat",
   "entity.moonproject.seat": "Mephistopheles Passenger Seat",
   "item.moonproject.mephistopheles_seat": "Mephistopheles Passenger Seat",
-
   "block.moonproject.containment_unit": "Abnormality Containment Unit",
   "item.moonproject.containment_unit": "Abnormality Containment Unit",
   "container.moonproject.containment_unit": "Abnormality Containment Unit",
   "tooltip.moonproject.containment_unit": "Lobotomy Corp primary containment facility. Holds abnormality cores, monitors Qlipoth counter, and prevents meltdowns.",
-
   "block.moonproject.enkephalin_extractor": "Enkephalin Extractor Terminal",
   "item.moonproject.enkephalin_extractor": "Enkephalin Extractor Terminal",
   "container.moonproject.enkephalin_extractor": "Enkephalin Extractor Terminal",
   "tooltip.moonproject.enkephalin_extractor": "Consumes catalysts to extract pure Enkephalin from adjacent containment units at the cost of Qlipoth stability.",
-
   "block.moonproject.meltdown_siren": "Qlipoth Meltdown Siren",
   "item.moonproject.meltdown_siren": "Qlipoth Meltdown Siren",
   "container.moonproject.meltdown_siren": "Qlipoth Meltdown Siren",
   "tooltip.moonproject.meltdown_siren": "Facility disaster emergency siren. Sounds air raid alarm during Qlipoth meltdowns or redstone signals, buffing responders and revealing hostiles.",
-
   "block.moonproject.bookbinding_table": "General Works Bookbinding Table",
   "item.moonproject.bookbinding_table": "General Works Bookbinding Table",
   "container.moonproject.bookbinding_table": "General Works Bookbinding Table",
   "container.moonmod.bookbinding_table": "General Works Bookbinding Table",
   "tooltip.moonproject.bookbinding_table": "Library of Ruina Keter floor crafting table. Compiles fragments of Light into books and combat pages, soothing the mind upon reading.",
-
   "block.moonproject.identity_extractor": "Identity Extraction Mirror Pod",
   "item.moonproject.identity_extractor": "Identity Extraction Mirror Pod",
   "container.moonproject.identity_extractor": "Identity Extraction Mirror Pod",
   "tooltip.moonproject.identity_extractor": "Limbus Company Singularity extraction facility. Consumes fragments, E.G.O cores, or exp bottles to pull mirror identities across dimensions.",
-
   "block.moonproject.mephistopheles_engine": "Mephistopheles Engine Core",
   "item.moonproject.mephistopheles_engine": "Mephistopheles Engine Core",
   "container.moonproject.mephistopheles_engine": "Mephistopheles Engine Core",
   "tooltip.moonproject.mephistopheles_engine": "Bio-mechanical diesel engine of the Limbus bus. Devours organic remains to sustain power and broadcast healing resonance to seated passengers.",
-
   "block.moonproject.kcorp_injector": "K-Corp Ampoule Injector",
   "item.moonproject.kcorp_injector": "K-Corp Ampoule Injector",
   "container.moonproject.kcorp_injector": "K-Corp Ampoule Injector",
   "tooltip.moonproject.kcorp_injector": "K-Corp Singularity industrial facility. Stores nanite tear fluid, generates an aerosol healing mist, and fills ampoules into glass bottles.",
-
   "block.moonproject.golden_bough_shrine": "Golden Bough Shrine",
   "item.moonproject.golden_bough_shrine": "Golden Bough Shrine",
   "container.moonproject.golden_bough_shrine": "Golden Bough Shrine",
   "tooltip.moonproject.golden_bough_shrine": "Seed of Light sacred pedestal. Inserting a Golden Bough projects a celestial pillar of light, establishing a 48-block panic-immune sanctuary.",
-
   "block.moonproject.reinforced_plating": "City Reinforced Plating",
   "item.moonproject.reinforced_plating": "City Reinforced Plating",
-  "tooltip.moonproject.reinforced_plating": "Heavy reinforced plating for Lobotomy Corp facilities. Boasts extreme blast resistance; surrounding containment units significantly slows Qlipoth decay."
+  "tooltip.moonproject.reinforced_plating": "Heavy reinforced plating for Lobotomy Corp facilities. Boasts extreme blast resistance; surrounding containment units significantly slows Qlipoth decay.",
+  "entity.moonproject.ai_player_npc": "Fake Player (DeepSeek Fish)",
+  "item.moonproject.deepseek_spawn_egg": "DeepSeek Fish Spawn Egg"
 }

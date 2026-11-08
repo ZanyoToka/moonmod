@@ -90,5 +90,7 @@
   "tooltip.moonproject.reinforced_plating": "脑叶公司设施重型防护装甲壁。具有极高硬度与超强抗爆性能，紧密包裹收容室可大幅减缓逆卡巴拉计数衰减。",
   "item.moonproject.final_match": "终末火柴",
   "item.moonproject.final_match_light": "终末火柴之光",
-  "key.moonproject.trinkets": "打开异想体饰品"
+  "key.moonproject.trinkets": "打开异想体饰品",
+  "entity.moonproject.ai_player_npc": "假人玩家 (DeepSeek大肥鱼)",
+  "item.moonproject.deepseek_spawn_egg": "DeepSeek大肥鱼生成蛋"
 }

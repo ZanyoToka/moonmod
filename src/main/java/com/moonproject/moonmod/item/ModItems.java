@@ -82,4 +82,12 @@ public class ModItems {
 
     public static final RegistryObject<Item> ALAYA_VIJNANA = ITEMS.register("alaya_vijnana",
             () -> new AlayaVijnanaItem(new Item.Properties().stacksTo(1).fireResistant()));
+
+    /** 假人玩家（DeepSeek大肥鱼）生成蛋 */
+    public static final RegistryObject<Item> DEEPSEEK_SPAWN_EGG = ITEMS.register("deepseek_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(
+                    com.moonproject.moonmod.init.ModEntities.AI_PLAYER_NPC,
+                    0x1E88E5,
+                    0x0D47A1,
+                    new Item.Properties()));
 }
