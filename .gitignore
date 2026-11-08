@@ -37,3 +37,8 @@ tools/
 
 # 无关的临时测试目录（不入库）
 solutions/
+
+# Python 生成物（缓存与本地数据库）
+__pycache__/
+*.pyc
+service-middleware/data/
