@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gemini | mod_creater_233 模块化提示词生成模板</title>
+  
+  <!-- PWA 标准配置 (支持 iOS 与 Android 无缝添加到手机主屏幕/打包) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#131314">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ModPrompt">
+
+  <!-- 视觉样式体系 (Gemini Design System + 提示词工作台专属样式，支持深浅色自适应) -->
+  <link rel="stylesheet" href="css/gemini.css">
+  <link rel="stylesheet" href="css/prompt-generator.css">
+</head>
+<body>
+
+  <!-- ================= 顶部导航栏 (Gemini Header 对齐图一) ================= -->
+  <header class="gemini-header">
+    <div class="header-left">
+      <!-- 官方 Gemini 汉堡菜单开关 (MC 像素三本线) -->
+      <button class="btn-sidebar-toggle" id="btnSidebarToggle" onclick="toggleSidebar()" title="展开/收起侧边栏">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+          <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <a href="index.html" class="gemini-brand" style="text-decoration:none;">
+        <div class="gemini-logo-mark">
+          <svg viewBox="0 0 28 28" width="24" height="24" fill="none">
+            <path d="M14 2C14 8.627 8.627 14 2 14C8.627 14 14 19.373 14 26C14 19.373 19.373 14 26 14C19.373 14 14 8.627 14 2Z" fill="url(#geminiLogoGradHeader)"/>
+            <defs>
+              <linearGradient id="geminiLogoGradHeader" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4285F4"/>
+                <stop offset="0.45" stop-color="#9B72CB"/>
+                <stop offset="0.85" stop-color="#D96570"/>
+                <stop offset="1" stop-color="#F28B82"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="gemini-brand-text">
+          <span class="brand-title-gemini">Gemini</span>
+          <span class="brand-title-sub">mod_creater_233</span>
+          <span class="brand-version-pill">v2.0 · 8大类型</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 右上角操作区：白天黑夜模式切换、导出 .md、移动端适配说明 -->
+    <div class="header-right">
+      <!-- 黑白白天夜间模式切换胶囊按钮 (Zero Emoji) -->
+      <button class="btn-gemini-action" id="btnThemeToggle" onclick="PromptUI.toggleTheme()" title="切换系统/深色/白天模式">
+        <!-- 动态注入 svg 与文本 -->
+      </button>
+
+      <button class="btn-gemini-action" onclick="PromptUI.exportMarkdownFile()" title="一键导出当前提示词为 .md 文件">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+          <defs>
+            <linearGradient id="gHeaderExportGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#4285F4"/>
+              <stop offset="100%" stop-color="#81C995"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 2h4v8h4v2h-2v2h-2v2h-4v-2H8v-2H6v-2h4V2z" fill="url(#gHeaderExportGrad)"/>
+          <rect x="4" y="18" width="16" height="2" fill="#9B72CB"/>
+        </svg>
+        <span>导出 .md</span>
+      </button>
+
+      <button class="btn-gemini-action" onclick="PromptUI.showSettingsModal()" title="查看移动端/iOS/Android PWA支持与打包">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+          <rect x="6" y="2" width="12" height="20" rx="2" fill="#28292A" stroke="#78D9EC" stroke-width="1.2"/>
+          <rect x="8" y="5" width="8" height="12" fill="#4285F4" opacity="0.3"/>
+          <rect x="11" y="18.5" width="2" height="1.5" fill="#FDD663"/>
+        </svg>
+        <span>移动端/离线应用</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= 页面主体容器 ================= -->
+  <div class="app-container">
+
+    <!-- 侧边栏：图一 Gemini 风格左侧抽屉 (草稿箱 + 预设管理 + 批量导出 + 用户底栏) -->
+    <aside class="gemini-sidebar" id="sidebarContainer">
+      <!-- 动态由 prompt-ui.js renderSidebarDrafts 构建 -->
+    </aside>
+
+    <!-- 主展示面板：对齐图一 Gemini 中央视觉主舞台 -->
+    <main class="gemini-main" id="mainContainer">
+      <!-- 动态由 prompt-ui.js renderMainStage 构建 -->
+    </main>
+
+  </div>
+
+  <!-- Toast 气泡容器 -->
+  <div class="gemini-toast-bubble" id="geminiToast"></div>
+
+  <!-- 模态弹窗容器 -->
+  <div class="gemini-modal-overlay" id="geminiModal"></div>
+
+  <!-- ================= 脚本架构注入 (按模块化依赖顺序) ================= -->
+  <!-- 1. Gemini Material 矢量图标库 (Zero-Emoji) -->
+  <script src="js/icons.js"></script>
+
+  <!-- 2. 资产类型注册中心 (TypeRegistry) -->
+  <script src="js/types/registry.js"></script>
+
+  <!-- 3. 8 大核心资产类型模块独立实现 -->
+  <script src="js/types/type-block.js"></script>
+  <script src="js/types/type-item.js"></script>
+  <script src="js/types/type-tool.js"></script>
+  <script src="js/types/type-armor.js"></script>
+  <script src="js/types/type-entity.js"></script>
+  <script src="js/types/type-block-entity.js"></script>
+  <script src="js/types/type-mob-effect.js"></script>
+  <script src="js/types/type-worldgen.js"></script>
+
+  <!-- 4. 提示词生成器核心调度与数据模型 -->
+  <script src="js/prompt-generator.js"></script>
+
+  <!-- 5. Gemini 风格 UI 联动驱动器 -->
+  <script src="js/prompt-ui.js"></script>
+
+  <!-- PWA Service Worker 离线缓存注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[PWA] ServiceWorker registered with scope:', reg.scope);
+        }).catch((err) => {
+          console.log('[PWA] ServiceWorker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

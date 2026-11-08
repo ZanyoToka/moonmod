@@ -1,0 +1,324 @@
+/* ============================================================
+   gemini.css — Google Gemini Design System (Dark & Light 自适应)
+   支持系统自动跟随 (prefers-color-scheme) 与手动 data-theme 覆盖
+   坚守零 Emoji 规范，纯 Material 极简高质感视觉
+   ============================================================ */
+
+/* 默认深色主题变量 (Gemini Dark) */
+:root {
+  --gemini-bg: #131314;
+  --gemini-surface: #1e1f20;
+  --gemini-surface-elevated: #28292a;
+  --gemini-surface-hover: #333537;
+  --gemini-surface-card: #1f2022;
+  
+  --gemini-outline: rgba(255, 255, 255, 0.12);
+  --gemini-outline-subtle: rgba(255, 255, 255, 0.08);
+  
+  --gemini-text: #e3e3e3;
+  --gemini-text-secondary: #c4c7c5;
+  --gemini-text-tertiary: #8e918f;
+  
+  --gemini-blue: #a8c7fa;
+  --gemini-blue-container: rgba(168, 199, 250, 0.12);
+  --gemini-blue-hover: rgba(168, 199, 250, 0.22);
+  
+  --gemini-purple: #d0bcff;
+  --gemini-purple-container: rgba(208, 188, 255, 0.12);
+  
+  --gemini-green: #81c995;
+  --gemini-green-container: rgba(129, 201, 149, 0.14);
+  
+  --gemini-yellow: #fdd663;
+  --gemini-yellow-container: rgba(253, 214, 99, 0.14);
+  
+  --gemini-red: #f28b82;
+  --gemini-red-container: rgba(242, 139, 130, 0.14);
+  
+  --gemini-input-bg: #131314;
+  --gemini-code-bg: #151617;
+  --gemini-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
+  
+  --font-sans: 'Google Sans', 'Google Sans Text', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --font-mono: 'Roboto Mono', 'Cascadia Code', Consolas, Monaco, monospace;
+}
+
+/* 浅色模式系统自适应或强制 light */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --gemini-bg: #f8fafd;
+    --gemini-surface: #ffffff;
+    --gemini-surface-elevated: #f0f4f9;
+    --gemini-surface-hover: #e7edf5;
+    --gemini-surface-card: #ffffff;
+
+    --gemini-outline: rgba(0, 0, 0, 0.12);
+    --gemini-outline-subtle: rgba(0, 0, 0, 0.06);
+
+    --gemini-text: #1f1f1f;
+    --gemini-text-secondary: #444746;
+    --gemini-text-tertiary: #727775;
+
+    --gemini-blue: #0b57d0;
+    --gemini-blue-container: rgba(11, 87, 208, 0.1);
+    --gemini-blue-hover: rgba(11, 87, 208, 0.18);
+
+    --gemini-purple: #6750a4;
+    --gemini-purple-container: rgba(103, 80, 164, 0.1);
+
+    --gemini-green: #146c2e;
+    --gemini-green-container: rgba(20, 108, 46, 0.1);
+
+    --gemini-yellow: #e37400;
+    --gemini-yellow-container: rgba(227, 116, 0, 0.1);
+
+    --gemini-red: #b3261e;
+    --gemini-red-container: rgba(179, 38, 30, 0.1);
+
+    --gemini-input-bg: #ffffff;
+    --gemini-code-bg: #f0f4f9;
+    --gemini-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+}
+
+:root[data-theme="light"] {
+  --gemini-bg: #f8fafd;
+  --gemini-surface: #ffffff;
+  --gemini-surface-elevated: #f0f4f9;
+  --gemini-surface-hover: #e7edf5;
+  --gemini-surface-card: #ffffff;
+
+  --gemini-outline: rgba(0, 0, 0, 0.12);
+  --gemini-outline-subtle: rgba(0, 0, 0, 0.06);
+
+  --gemini-text: #1f1f1f;
+  --gemini-text-secondary: #444746;
+  --gemini-text-tertiary: #727775;
+
+  --gemini-blue: #0b57d0;
+  --gemini-blue-container: rgba(11, 87, 208, 0.1);
+  --gemini-blue-hover: rgba(11, 87, 208, 0.18);
+
+  --gemini-purple: #6750a4;
+  --gemini-purple-container: rgba(103, 80, 164, 0.1);
+
+  --gemini-green: #146c2e;
+  --gemini-green-container: rgba(20, 108, 46, 0.1);
+
+  --gemini-yellow: #e37400;
+  --gemini-yellow-container: rgba(227, 116, 0, 0.1);
+
+  --gemini-red: #b3261e;
+  --gemini-red-container: rgba(179, 38, 30, 0.1);
+
+  --gemini-input-bg: #ffffff;
+  --gemini-code-bg: #f0f4f9;
+  --gemini-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="dark"] {
+  --gemini-bg: #131314;
+  --gemini-surface: #1e1f20;
+  --gemini-surface-elevated: #28292a;
+  --gemini-surface-hover: #333537;
+  --gemini-surface-card: #1f2022;
+  
+  --gemini-outline: rgba(255, 255, 255, 0.12);
+  --gemini-outline-subtle: rgba(255, 255, 255, 0.08);
+  
+  --gemini-text: #e3e3e3;
+  --gemini-text-secondary: #c4c7c5;
+  --gemini-text-tertiary: #8e918f;
+  
+  --gemini-blue: #a8c7fa;
+  --gemini-blue-container: rgba(168, 199, 250, 0.12);
+  --gemini-blue-hover: rgba(168, 199, 250, 0.22);
+  
+  --gemini-purple: #d0bcff;
+  --gemini-purple-container: rgba(208, 188, 255, 0.12);
+  
+  --gemini-green: #81c995;
+  --gemini-green-container: rgba(129, 201, 149, 0.14);
+  
+  --gemini-yellow: #fdd663;
+  --gemini-yellow-container: rgba(253, 214, 99, 0.14);
+  
+  --gemini-red: #f28b82;
+  --gemini-red-container: rgba(242, 139, 130, 0.14);
+  
+  --gemini-input-bg: #131314;
+  --gemini-code-bg: #151617;
+  --gemini-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--gemini-bg);
+  color: var(--gemini-text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* 全局 SVG 基础重置，杜绝溢出撑大 */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* 顶部导航 */
+header.gemini-header {
+  height: 60px;
+  background: var(--gemini-surface);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--gemini-outline-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.btn-sidebar-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--gemini-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.btn-sidebar-toggle:hover {
+  background: var(--gemini-outline-subtle);
+  color: var(--gemini-text);
+}
+
+.gemini-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.gemini-logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.brand-title-gemini {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gemini-text);
+}
+.brand-title-sub {
+  font-size: 14px;
+  color: var(--gemini-text-secondary);
+  font-weight: 400;
+}
+.brand-version-pill {
+  font-size: 11px;
+  background: var(--gemini-blue-container);
+  color: var(--gemini-blue);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 顶栏操作按钮，严禁折行 */
+.btn-gemini-action {
+  background: var(--gemini-surface-elevated);
+  border: 1px solid var(--gemini-outline);
+  color: var(--gemini-text-secondary);
+  padding: 7px 14px;
+  border-radius: 18px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 34px;
+}
+.btn-gemini-action:hover {
+  background: var(--gemini-surface-hover);
+  color: var(--gemini-text);
+}
+.btn-gemini-action svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* 主容器与侧边栏 */
+.app-container {
+  display: flex;
+  flex: 1;
+  position: relative;
+  min-height: calc(100vh - 60px);
+}
+
+.gemini-sidebar {
+  width: 270px;
+  background: var(--gemini-surface);
+  border-right: 1px solid var(--gemini-outline-subtle);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 90;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.gemini-sidebar.collapsed {
+  transform: translateX(-100%);
+  position: absolute;
+  height: 100%;
+}
+
+.gemini-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}

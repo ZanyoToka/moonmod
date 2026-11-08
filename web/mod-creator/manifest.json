@@ -1,0 +1,21 @@
+{
+  "name": "mod_creater_233",
+  "short_name": "mod_creater_233",
+  "description": "模块化 Minecraft 模组开发提示词与规约生成工作台",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#131314",
+  "theme_color": "#131314",
+  "icons": [
+    {
+      "src": "./css/gemini-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./css/gemini-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
